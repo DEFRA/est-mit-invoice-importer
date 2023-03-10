@@ -23,7 +23,7 @@ steps:
     SonarCloud: 'SonarCloud EST.MIT.InvoiceImporter'
     organization: 'defra'
     scannerMode: 'MSBuild'
-    projectKey: 'defra_est-mit-invoiceImporter'
+    projectKey: 'defra_est-mit-invoiceimporter'
     projectName: 'EST.MIT.InvoiceImporter'
     extraProperties: |
       sonar.exclusions=**/obj/**,**/*.dll,**/*.cshtml,**/*.css,**/*.js,**/*.json,**/wwwroot/**,**/EST.MIT.InvoiceImporter.Function.Test/**,**/Program.cs,**/Function1.cs
