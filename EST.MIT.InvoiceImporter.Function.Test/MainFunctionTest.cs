@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace InvoiceImporter.Function.Tests
 {
@@ -53,7 +54,7 @@ namespace InvoiceImporter.Function.Tests
         {
             // Arrange
             string msg = JsonConvert.SerializeObject(_importRequest);
-            string filePath = Environment.CurrentDirectory + "\\" + "Test Artefacts" + "\\" + "test.xlsm";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "/" + "Test Artefacts" + "/" + "test.xlsm";
             using var mockBlobStream = new FileStream(filePath, FileMode.Open);
 
             _mockBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), It.IsAny<CancellationToken>())).ReturnsAsync(mockBlobStream);
