@@ -1,62 +1,23 @@
 # Introduction 
-This Repository contains the code for consuming the invoices to be imported from Web end points to the Payment Generator. 
+This Repository contains the code for the function app which parses bulk upload data from blob storage when triggered from the message queue. 
+It reads the bulk invoice spreadsheet data to be imported from blob storage, checks it for validation errors and sends the validated data onto the invoice service.
 
-# Getting Started 
-
-## CosmosDb ??
-
-- [Install and use the Azure Cosmos DB Emulator for local development and testing](https://learn.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=ssl-netstd21)
-
-## Azurite
-
-Follow the following guide to setup Azurite:
-
-- [Azurite emulator for local Azure Storage development](https://dev.azure.com/defragovuk/DEFRA-EST/_wiki/wikis/DEFRA-EST/7722/Azurite-emulator-for-local-Azure-Storage-development)
-
-- [Docker](https://dev.azure.com/defragovuk/DEFRA-EST/_wiki/wikis/DEFRA-EST/9601/Azurite-with-Docker)
-
-## Storage ??
-
-The function app uses Azure Storage for Table and Queue.
-
+## Entry Queue
 The function app requires:
+- Queue name: `invoice-importer`
 
-- Table name: `invoices`
-- Queue name: `Invoice Importer`
+## Storage
+The function app uses Azure Storage for Table and Queue storage. 
 
-## local.settings
+### Storage Name
 
-'''
-{
-    "IsEncrypted": false,
-    "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "QueueConnectionString": "UseDevelopmentStorage=true",
-        "TableConnectionString": "UseDevelopmentStorage=true"
-    }
-}
+'invoices/import'
 
+## Destination Endpoint
 
+'POST /invoice'
 
-## HTTP
-
-## Endpoint ??
-
-'GET /invoice/invoiceimporter/{invoiceId}'
-
-### Response 200
-
-'''
-{
-	"name": "Invoice Importer"
-	"properties":{
-	"id":"1234567890",
-	}
-	 
-}
-
-# Build and Test 
+## Build and Test 
 To run the function:
 
 'cd EST.MIT.InvoiceImporter.Function'
