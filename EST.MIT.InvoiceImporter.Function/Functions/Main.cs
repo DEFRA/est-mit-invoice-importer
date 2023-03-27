@@ -12,7 +12,7 @@ public static class Importer
 {
     [FunctionName("MainTrigger")]
     public static async Task QueueTrigger(
-        [QueueTrigger("invoice-importer", 
+        [QueueTrigger("invoice-importer",
         Connection = "QueueConnectionString")] string importMsg,
         IBinder blobBinder,
         ILogger log)
