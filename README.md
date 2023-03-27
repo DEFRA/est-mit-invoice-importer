@@ -1,20 +1,68 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This Repository contains the code for consuming the invoices to be imported from Web end points to the Payment Generator. 
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Getting Started 
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+## CosmosDb ??
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+- [Install and use the Azure Cosmos DB Emulator for local development and testing](https://learn.microsoft.com/en-us/azure/cosmos-db/local-emulator?tabs=ssl-netstd21)
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Azurite
+
+Follow the following guide to setup Azurite:
+
+- [Azurite emulator for local Azure Storage development](https://dev.azure.com/defragovuk/DEFRA-EST/_wiki/wikis/DEFRA-EST/7722/Azurite-emulator-for-local-Azure-Storage-development)
+
+- [Docker](https://dev.azure.com/defragovuk/DEFRA-EST/_wiki/wikis/DEFRA-EST/9601/Azurite-with-Docker)
+
+## Storage ??
+
+The function app uses Azure Storage for Table and Queue.
+
+The function app requires:
+
+- Table name: `invoices`
+- Queue name: `Invoice Importer`
+
+## local.settings
+
+'''
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+        "QueueConnectionString": "UseDevelopmentStorage=true",
+        "TableConnectionString": "UseDevelopmentStorage=true"
+    }
+}
+
+
+
+## HTTP
+
+## Endpoint ??
+
+'GET /invoice/invoiceimporter/{invoiceId}'
+
+### Response 200
+
+'''
+{
+	"name": "Invoice Importer"
+	"properties":{
+	"id":"1234567890",
+	}
+	 
+}
+
+# Build and Test 
+To run the function:
+
+'cd EST.MIT.InvoiceImporter.Function'
+
+'func start'
+
+## Useful links
+
+- [Use dependency injection in .NET Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection)
