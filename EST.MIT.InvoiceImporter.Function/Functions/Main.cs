@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using EST.MIT.InvoiceImporter.Function.Services;
 
 namespace InvoiceImporter.Function;
 
@@ -18,30 +19,9 @@ public static class Importer
         ILogger log)
     {
         log.LogInformation($"[MainTrigger] Received message: {importMsg} at {DateTime.UtcNow.ToLongTimeString()}");
-        ImportRequest request;
-
-        if (importMsg == null)
-        {
-            log.LogError("No import request received.");
-            return;
-        }
-
-        try
-        {
-            request = JsonConvert.DeserializeObject<ImportRequest>(importMsg);
-        }
-        catch (JsonException ex)
-        {
-            log.LogError(ex, "Invalid import request received.");
-            return;
-        }
-
-        var blobAttr = new BlobAttribute($"invoices/import/{request.FileName}", FileAccess.Read)
-        {
-            Connection = "StorageConnectionString"
-        };
-
-        using var blobStream = await blobBinder.BindAsync<Stream>(blobAttr);
+        BlobService blobService = new ();
+        Stream memoryStream = await blobService.ReadBLOBIntoStream(importMsg, log, blobBinder);
+        log.LogInformation("Memory stream contains {0} bytes", memoryStream?.Length.ToString() ?? "0");
         log.LogInformation("File read into blobstream.");
     }
 }
