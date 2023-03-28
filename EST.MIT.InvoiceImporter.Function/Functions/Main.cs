@@ -1,11 +1,9 @@
-﻿using InvoiceImporter.Function.Models;
+﻿using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using EST.MIT.InvoiceImporter.Function.Services;
 
 namespace InvoiceImporter.Function;
 
@@ -19,7 +17,7 @@ public static class Importer
         ILogger log)
     {
         log.LogInformation($"[MainTrigger] Received message: {importMsg} at {DateTime.UtcNow.ToLongTimeString()}");
-        BlobService blobService = new ();
+        BlobService blobService = new();
         Stream memoryStream = await blobService.ReadBLOBIntoStream(importMsg, log, blobBinder);
         log.LogInformation("Memory stream contains {0} bytes", memoryStream?.Length.ToString() ?? "0");
         log.LogInformation("File read into blobstream.");
