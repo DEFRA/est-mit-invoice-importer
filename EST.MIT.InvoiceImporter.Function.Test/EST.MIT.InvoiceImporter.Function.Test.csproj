@@ -26,14 +26,4 @@
     <ProjectReference Include="..\EST.MIT.InvoiceImporter.Function\EST.MIT.InvoiceImporter.Function.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Test Artefacts\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Test Artefacts\test.xlsm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
