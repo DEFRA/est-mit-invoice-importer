@@ -54,7 +54,7 @@ namespace InvoiceImporter.Function.Tests
         {
             // Arrange
             string msg = JsonConvert.SerializeObject(_importRequest);
-            var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("some bulk file data"));
+            var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("This is my excel file"));
             _mockBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), It.IsAny<CancellationToken>())).ReturnsAsync(memoryStream);
 
             // Act
