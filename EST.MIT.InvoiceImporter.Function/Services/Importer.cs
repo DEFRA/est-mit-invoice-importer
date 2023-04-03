@@ -18,7 +18,7 @@ namespace EST.MIT.Importer.Function.Services
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
             BlobService blobService = new();
             Stream memoryStream = await blobService.ReadBLOBIntoStream(importMessage, log, blobBinder);
-            //Log the memory stream length in kilobytes
+            if (memoryStream != null)
             log.LogInformation($"[MainTrigger] Memory stream length: {memoryStream.Length / 1024} KB");
         }
     }
