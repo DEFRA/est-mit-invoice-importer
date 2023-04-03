@@ -1,10 +1,10 @@
+using EST.MIT.Importer.Function.Services;
 using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using System.Text;
-using EST.MIT.Importer.Function.Services;
 
 namespace InvoiceImporter.Function.Tests
 {

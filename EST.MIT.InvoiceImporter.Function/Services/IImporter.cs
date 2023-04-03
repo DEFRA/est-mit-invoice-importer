@@ -8,4 +8,4 @@ namespace EST.MIT.Importer.Function.Services
     {
         Task QueueTrigger([QueueTrigger("invoice-importer", Connection = "QueueConnectionString")] string importMessage, IBinder blobBinder, ILogger log);
     }
-} 
+}
