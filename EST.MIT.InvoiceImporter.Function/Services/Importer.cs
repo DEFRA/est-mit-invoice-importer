@@ -21,5 +21,7 @@ namespace EST.MIT.Importer.Function.Services
             if (memoryStream != null)
                 log.LogInformation($"[MainTrigger] Memory stream length: {memoryStream.Length / 1024} KB");
         }
+
+        //TODO add call to invoice parser service 
     }
 }
