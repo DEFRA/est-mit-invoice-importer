@@ -69,7 +69,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: '**/MIT.InvoiceImporter.Function.csproj'
+    projects: '**/EST.MIT.InvoiceImporter.Function.csproj'
     arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true
 
