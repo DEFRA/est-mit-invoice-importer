@@ -1,3 +1,4 @@
+using EST.MIT.Importer.Function.Services;
 using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -25,9 +26,10 @@ namespace InvoiceImporter.Function.Tests
         {
             // Arrange
             const string expectedErrorMsg = "No import request received.";
+            Importer importer = new();
 
             // Act
-            await Importer.QueueTrigger(null, _mockBinder.Object, _mockLogger.Object);
+            await importer.QueueTrigger(null, _mockBinder.Object, _mockLogger.Object);
 
             // Assert
             _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
@@ -40,9 +42,10 @@ namespace InvoiceImporter.Function.Tests
             // Arrange
             const string expectedErrorMsg = "Invalid import request received.";
             const string queueMessage = "Test Message";
+            Importer importer = new();
 
             // Act
-            await Importer.QueueTrigger(queueMessage, _mockBinder.Object, _mockLogger.Object);
+            await importer.QueueTrigger(queueMessage, _mockBinder.Object, _mockLogger.Object);
 
             // Assert
             _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
@@ -54,11 +57,12 @@ namespace InvoiceImporter.Function.Tests
         {
             // Arrange
             string msg = JsonConvert.SerializeObject(_importRequest);
-            var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("some bulk file data"));
+            var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("This is my excel file"));
+            Importer importer = new();
             _mockBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), It.IsAny<CancellationToken>())).ReturnsAsync(memoryStream);
 
             // Act
-            await Importer.QueueTrigger(msg, _mockBinder.Object, _mockLogger.Object);
+            await importer.QueueTrigger(msg, _mockBinder.Object, _mockLogger.Object);
 
             // Asserts
             _mockLogger.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.AtLeastOnce());

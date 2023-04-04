@@ -1,9 +1,8 @@
 {
   "profiles": {
-    "EST_MIT_InvoiceImporter_Function": {
+    "EST.MIT.InvoiceImporter.Function": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7113",
-      "launchBrowser": false
+      "commandLineArgs": "--port 7113"
     }
   }
 }
