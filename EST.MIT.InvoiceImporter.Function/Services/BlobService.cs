@@ -51,7 +51,12 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 var blobBinding = await blobBinder.BindAsync<Stream>(blobAttr);
                 return true;
             }
-            catch (JsonException ex) { log.LogError($"An error occured when creating an archive file: [{0}]", ex); }
+            catch (JsonException ex) 
+            { 
+                log.LogError($"An error occured when creating an archive file: [{0}]", ex);
+                return false;
+            }
+
         }
 
         public async Task<bool> MoveFileIntoArchive(string fileName, ILogger log, IBinder blobBinder)
