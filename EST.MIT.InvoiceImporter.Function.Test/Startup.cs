@@ -4,11 +4,11 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: FunctionsStartup(typeof(Startup.Function.Startup))]
+[assembly: FunctionsStartup(typeof(Startup.Function.TestStartup))]
 
 namespace Startup.Function
 {
-    public class Startup : FunctionsStartup
+    public class TestStartup : FunctionsStartup
     {
         [ExcludeFromCodeCoverage]
         public override void Configure(IFunctionsHostBuilder builder)
