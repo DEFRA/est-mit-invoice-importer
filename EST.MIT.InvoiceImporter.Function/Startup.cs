@@ -1,4 +1,3 @@
-using Azure.Storage.Blobs;
 using EST.MIT.Importer.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;

@@ -16,14 +16,13 @@ namespace EST.MIT.InvoiceImporter.Function.Services
         public async Task<Stream> ReadBLOBIntoStream(string importMsg, ILogger log, IBinder blobBinder)
         {
             Stream blobStream = null;
-            ImportRequest importRequest = null;
-
             if (importMsg == null)
             {
                 log.LogError("No import request received.");
                 return blobStream;
             }
 
+            ImportRequest importRequest;
             try
             {
                 importRequest = JsonConvert.DeserializeObject<ImportRequest>(importMsg);
@@ -39,10 +38,10 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 Connection = "StorageConnectionString"
             };
 
-            _fileName= importRequest.FileName;
+            _fileName = importRequest.FileName;
             return await blobBinder.BindAsync<Stream>(blobAttr);
         }
-        
+
         public static async Task<bool> MoveFileToArchive(string fileName, ILogger log, BlobServiceClient blobServiceClient)
         {
             try
@@ -61,7 +60,7 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 return false;
             }
         }
-   
+
         public string GetFileName()
         {
             return _fileName;

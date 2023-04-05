@@ -1,4 +1,3 @@
-using Azure.Identity;
 using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.WebJobs;
@@ -18,16 +17,14 @@ namespace EST.MIT.Importer.Function.Services
             ILogger log)
         {
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-
             var blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable("StorageConnectionString"));
-
             BlobService blobService = new();
             Stream memoryStream = await blobService.ReadBLOBIntoStream(importMessage, log, blobBinder);
             if (memoryStream != null)
             {
                 log.LogInformation($"[MainTrigger] file read into memory stream, filelength: {memoryStream.Length / 1024} KB");
                 log.LogInformation($"Moving file to archive: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-                if(await BlobService.MoveFileToArchive(blobService.GetFileName(), log, blobServiceClient))
+                if (await BlobService.MoveFileToArchive(blobService.GetFileName(), log, blobServiceClient))
                 {
                     log.LogInformation($"File moved to archive: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
                 }
