@@ -71,7 +71,6 @@ namespace EST.MIT.InvoiceImporter.Function.Services.Tests
             var containerClient = blobServiceClient.GetBlobContainerClient("invoices");
             var sourceBlobClient = containerClient.GetBlobClient($"import/{fileName}");
             var destBlobClient = containerClient.GetBlobClient($"archive/{fileName}");
-            var blobService = new BlobService();
             var log = new Mock<ILogger<BlobService>>().Object;
 
             // Act

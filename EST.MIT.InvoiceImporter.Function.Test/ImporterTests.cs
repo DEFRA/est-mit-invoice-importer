@@ -1,14 +1,8 @@
-﻿using Microsoft.Azure.WebJobs;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Azure.Storage.Blobs;
 using EST.MIT.Importer.Function.Services;
-using Microsoft.Extensions.Logging;
-using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace InvoiceImporter.Function.Test
 {
