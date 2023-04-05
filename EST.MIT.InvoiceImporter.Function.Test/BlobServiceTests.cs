@@ -1,5 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using InvoiceImporter.Function.Models;
+﻿using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
