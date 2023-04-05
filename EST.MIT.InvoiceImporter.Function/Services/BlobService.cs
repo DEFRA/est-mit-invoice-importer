@@ -4,6 +4,7 @@ using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -54,14 +55,14 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 await sourceBlobClient.DeleteIfExistsAsync();
                 return true;
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
                 log.LogError($"An error occured when moving a file to the archive folder: [{0}]", ex);
                 return false;
             }
         }
 
-        public string GetFileName()
+        public virtual string GetFileName()
         {
             return _fileName;
         }

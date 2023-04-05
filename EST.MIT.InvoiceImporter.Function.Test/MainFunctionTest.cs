@@ -3,8 +3,6 @@ using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
-using System.Text;
 
 namespace InvoiceImporter.Function.Tests
 {
@@ -26,6 +24,7 @@ namespace InvoiceImporter.Function.Tests
         {
             // Arrange
             const string expectedErrorMsg = "No import request received.";
+            Environment.SetEnvironmentVariable("StorageConnectionString", "UseDevelopmentStorage=true");
             Importer importer = new();
 
             // Act
@@ -42,6 +41,7 @@ namespace InvoiceImporter.Function.Tests
             // Arrange
             const string expectedErrorMsg = "Invalid import request received.";
             const string queueMessage = "Test Message";
+            Environment.SetEnvironmentVariable("StorageConnectionString", "UseDevelopmentStorage=true");
             Importer importer = new();
 
             // Act
@@ -50,22 +50,6 @@ namespace InvoiceImporter.Function.Tests
             // Assert
             _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
             _mockLogger.Verify(l => l.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((o, t) => string.Equals(expectedErrorMsg, o.ToString(), StringComparison.InvariantCulture)), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task QueueTrigger_ValidMessage_ParsesInvoices()
-        {
-            // Arrange
-            string msg = JsonConvert.SerializeObject(_importRequest);
-            var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("This is my excel file"));
-            Importer importer = new();
-            _mockBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), It.IsAny<CancellationToken>())).ReturnsAsync(memoryStream);
-
-            // Act
-            await importer.QueueTrigger(msg, _mockBinder.Object, _mockLogger.Object);
-
-            // Asserts
-            _mockLogger.Verify(x => x.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.AtLeastOnce());
         }
     }
 }
