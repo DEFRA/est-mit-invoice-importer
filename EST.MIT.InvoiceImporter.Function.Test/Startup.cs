@@ -15,10 +15,14 @@ namespace Startup.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             Console.WriteLine("Configuring service...");
-
             builder.Services.AddSingleton<IImporter>((s) =>
             {
                 return new Importer();
+            });
+
+            builder.Services.AddSingleton<BlobServiceClient>((bsc) =>
+            {
+                return new BlobServiceClient(Environment.GetEnvironmentVariable("StorageConnectionString"));
             });
         }
     }
