@@ -21,7 +21,7 @@ namespace EST.MIT.Importer.Function.Services
             BlobService blobService = new();
             Stream memoryStream = await blobService.ReadBLOBIntoStream(importMessage, log, blobBinder);
             if (memoryStream != null)
-            { await ProcessStream(importMessage, log, blobServiceClient, blobService, memoryStream); }
+            {await ProcessStream(importMessage, log, blobServiceClient, blobService, memoryStream);}
         }
 
         public static async Task ProcessStream(string importMessage, ILogger log, BlobServiceClient blobServiceClient, BlobService blobService, Stream memoryStream)
@@ -29,7 +29,7 @@ namespace EST.MIT.Importer.Function.Services
             log.LogInformation($"[MainTrigger] file read into memory stream, filelength: {memoryStream.Length / 1024} KB");
             log.LogInformation($"Moving file to archive: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
             if (await BlobService.MoveFileToArchive(blobService.GetFileName(), log, blobServiceClient))
-            { log.LogInformation($"File moved to archive: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}"); }
+            {log.LogInformation($"File moved to archive: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");}
         }
     }
 }
