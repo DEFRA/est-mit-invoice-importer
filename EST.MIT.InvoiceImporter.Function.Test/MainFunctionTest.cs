@@ -34,7 +34,7 @@ namespace InvoiceImporter.Function.Tests
 
             var mockBlobServiceClient = new Mock<BlobServiceClient>();
             var mockAzureBlobService = new Mock<IAzureBlobService>();
-            mockAzureBlobService.Setup(x => x.blobServiceClient).Returns(mockBlobServiceClient.Object);
+            mockAzureBlobService.Setup(x => x.BlobServiceClient).Returns(mockBlobServiceClient.Object);
 
             var mockBlobService = new Mock<IBlobService>();
 
@@ -60,12 +60,12 @@ namespace InvoiceImporter.Function.Tests
         [Fact]
         public async void QueueTrigger_Valid_Request()
         {
-            
+
             // Arrange
             _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<IBinder>())).ReturnsAsync(new Mock<Stream>().Object);
             _mockBlobService.Setup(x => x.GetFileName()).Returns("testfile.csv");
             _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
-            
+
             // Act 
             await _importer.QueueTrigger("some text", _mockBinder.Object, _mockLogger.Object);
 

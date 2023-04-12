@@ -15,11 +15,11 @@ namespace EST.MIT.Importer.Function.Services
         private readonly IConfiguration _configuration;
         private readonly BlobServiceClient _blobServiceClient;
 
-        public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService) 
+        public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService)
         {
-            _blobService= blobService;
+            _blobService = blobService;
             _configuration = configuration;
-            _blobServiceClient = azureBlobService.blobServiceClient == null? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection")) : azureBlobService.blobServiceClient;
+            _blobServiceClient = azureBlobService.BlobServiceClient == null ? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection")) : azureBlobService.BlobServiceClient;
         }
 
         [FunctionName("MainTrigger")]

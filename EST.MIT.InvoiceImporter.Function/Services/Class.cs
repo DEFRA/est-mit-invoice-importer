@@ -6,7 +6,7 @@ namespace Services;
 
 public interface IAzureBlobService
 {
-    BlobServiceClient? blobServiceClient { get; set; }
+    BlobServiceClient? BlobServiceClient { get; set; }
 }
 
 
@@ -21,9 +21,9 @@ public class AzureBlobService : IAzureBlobService
     {
         _configuration = configuration;
         _blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
-        blobServiceClient = _blobServiceClient;
+        BlobServiceClient = _blobServiceClient;
     }
 
-    public BlobServiceClient? blobServiceClient { get; set; }
+    public BlobServiceClient? BlobServiceClient { get; set; }
 
 }
