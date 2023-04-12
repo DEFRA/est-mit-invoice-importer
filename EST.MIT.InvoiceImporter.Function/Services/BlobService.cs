@@ -45,7 +45,7 @@ namespace EST.MIT.InvoiceImporter.Function.Services
         }
 
         [ExcludeFromCodeCoverage]
-        public static async Task<bool> MoveFileToArchive(string fileName, ILogger log, BlobServiceClient blobServiceClient)
+        public async Task<bool> MoveFileToArchive(string fileName, ILogger log, BlobServiceClient blobServiceClient)
         {
             try
             {
