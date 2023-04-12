@@ -12,7 +12,7 @@ public interface IAzureBlobService
 
 [ExcludeFromCodeCoverage]
 public class AzureBlobService : IAzureBlobService
-{ 
+{
     private readonly IConfiguration? _configuration;
     private readonly BlobServiceClient _blobServiceClient;
 

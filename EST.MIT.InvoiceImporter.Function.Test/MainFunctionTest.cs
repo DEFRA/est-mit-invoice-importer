@@ -1,12 +1,11 @@
 using Azure.Storage.Blobs;
+using AzureServices;
 using EST.MIT.Importer.Function.Services;
 using EST.MIT.InvoiceImporter.Function.Services;
-using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using AzureServices;
 
 namespace InvoiceImporter.Function.Tests
 {
@@ -14,7 +13,6 @@ namespace InvoiceImporter.Function.Tests
     {
         private readonly Mock<ILogger> _mockLogger;
         private readonly Mock<IBinder> _mockBinder;
-        private readonly ImportRequest _importRequest;
         private readonly IConfiguration _configuration;
         private readonly Importer _importer;
         private readonly Mock<IBlobService> _mockBlobService;
@@ -23,7 +21,6 @@ namespace InvoiceImporter.Function.Tests
         {
             _mockLogger = new Mock<ILogger>();
             _mockBinder = new Mock<IBinder>();
-            _importRequest = new ImportRequest { FileName = "12345", FileSize = 12345, FileType = "xlsx", Timestamp = DateTimeOffset.UtcNow };
             _mockBlobService = new Mock<IBlobService>();
 
             var mockConfig = new Mock<IConfiguration>();
