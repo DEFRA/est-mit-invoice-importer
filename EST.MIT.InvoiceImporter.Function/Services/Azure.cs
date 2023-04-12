@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Services;
+namespace AzureServices;
 
 public interface IAzureBlobService
 {
@@ -12,7 +12,7 @@ public interface IAzureBlobService
 
 [ExcludeFromCodeCoverage]
 public class AzureBlobService : IAzureBlobService
-{
+{ 
     private readonly IConfiguration? _configuration;
     private readonly BlobServiceClient _blobServiceClient;
 

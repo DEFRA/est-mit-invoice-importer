@@ -6,7 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Services;
+using AzureServices;
 
 namespace InvoiceImporter.Function.Tests
 {
@@ -15,7 +15,7 @@ namespace InvoiceImporter.Function.Tests
         private readonly Mock<ILogger> _mockLogger;
         private readonly Mock<IBinder> _mockBinder;
         private readonly ImportRequest _importRequest;
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         private readonly Importer _importer;
         private readonly Mock<IBlobService> _mockBlobService;
 
@@ -41,22 +41,6 @@ namespace InvoiceImporter.Function.Tests
             _importer = new Importer(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object);
         }
 
-        //[Fact]
-        //public async Task QueueTrigger_No_Import_Request_Error()
-        //{
-        //    // Arrange
-        //    const string expectedErrorMsg = "No import request received.";
-        //    Environment.SetEnvironmentVariable("StorageConnectionString", "UseDevelopmentStorage=true");
-        //    Importer importer = new();
-
-        //    // Act
-        //    await importer.QueueTrigger(null, _mockBinder.Object, _mockLogger.Object);
-
-        //    // Assert
-        //    _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
-        //    _mockLogger.Verify(l => l.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((o, t) => string.Equals(expectedErrorMsg, o.ToString(), StringComparison.InvariantCulture)), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
-        //}
-
         [Fact]
         public async void QueueTrigger_Valid_Request()
         {
@@ -72,23 +56,5 @@ namespace InvoiceImporter.Function.Tests
             // Assert
             _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
         }
-
-
-        //[Fact]
-        //public async Task QueueTrigger_Invalid_Import_Request_Error()
-        //{
-        //    // Arrange
-        //    const string expectedErrorMsg = "Invalid import request received.";
-        //    const string queueMessage = "Test Message";
-        //    Environment.SetEnvironmentVariable("StorageConnectionString", "UseDevelopmentStorage=true");
-        //    Importer importer = new();
-
-        //    // Act
-        //    await importer.QueueTrigger(queueMessage, _mockBinder.Object, _mockLogger.Object);
-
-        //    // Assert
-        //    _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
-        //    _mockLogger.Verify(l => l.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((o, t) => string.Equals(expectedErrorMsg, o.ToString(), StringComparison.InvariantCulture)), It.IsAny<Exception>(), (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()), Times.Once);
-        //}
     }
 }

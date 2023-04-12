@@ -3,7 +3,7 @@ using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Services;
+using AzureServices;
 using System;
 using System.Threading.Tasks;
 
@@ -19,7 +19,7 @@ namespace EST.MIT.Importer.Function.Services
         {
             _blobService = blobService;
             _configuration = configuration;
-            _blobServiceClient = azureBlobService.BlobServiceClient == null ? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection")) : azureBlobService.BlobServiceClient;
+            _blobServiceClient = azureBlobService.BlobServiceClient ?? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
         }
 
         [FunctionName("MainTrigger")]
@@ -29,13 +29,6 @@ namespace EST.MIT.Importer.Function.Services
             ILogger log)
         {
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-
-
-
-            var somthingElse = _configuration["StorageConnectionString"];
-
-            //var blobServiceClient = new BlobServiceClient(somthingElse);
-
             using (await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
             {
                 await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
