@@ -16,6 +16,8 @@ namespace Startup.Function
         {
             Console.WriteLine("Configuring service...");
 
+            builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
+
             builder.Services.AddSingleton<IImporter, Importer>();
 
             builder.Services.AddSingleton<IBlobService, BlobService>();
