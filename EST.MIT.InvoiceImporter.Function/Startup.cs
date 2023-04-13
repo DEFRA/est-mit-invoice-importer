@@ -1,4 +1,5 @@
 using EST.MIT.Importer.Function.Services;
+using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -14,10 +15,10 @@ namespace Startup.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             Console.WriteLine("Configuring service...");
-            builder.Services.AddSingleton<IImporter>((s) =>
-            {
-                return new Importer();
-            });
+
+            builder.Services.AddSingleton<IImporter, Importer>();
+
+            builder.Services.AddSingleton<IBlobService, BlobService>();
         }
     }
 }
