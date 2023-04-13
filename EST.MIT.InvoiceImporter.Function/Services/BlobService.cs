@@ -59,7 +59,7 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 log.LogInformation($"File {fileName} moved to archive folder.");
                 return true;
             }
-            catch(RequestFailedException ex)
+            catch (RequestFailedException ex)
             {
                 log.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
                 log.LogError(ex.ErrorCode);
