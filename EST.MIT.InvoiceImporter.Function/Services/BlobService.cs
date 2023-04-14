@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
@@ -55,11 +56,19 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 CopyFromUriOperation copyOperation = await destBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri);
                 await copyOperation.WaitForCompletionAsync();
                 await sourceBlobClient.DeleteIfExistsAsync();
+                log.LogInformation($"File {fileName} moved to archive folder.");
                 return true;
+            }
+            catch (RequestFailedException ex)
+            {
+                log.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+                log.LogError(ex.ErrorCode);
+                return false;
             }
             catch (Exception ex)
             {
-                log.LogError($"An error occured when moving a file to the archive folder: [{0}]", ex);
+                log.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+                log.LogError(ex.Message);
                 return false;
             }
         }
