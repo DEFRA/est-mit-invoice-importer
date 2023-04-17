@@ -20,9 +20,9 @@ public class InvoiceRange
 
     private static InvoiceRange InvoiceHeader(uint lastRow)
     {
-        var firstRowNum = InvoiceUtil.GetRowIndex("B5");
+        var firstRowNum = InvoiceUtil.GetRowIndex("B2");
         var lastRowNum = InvoiceUtil.GetRowIndex($"H{lastRow}");
-        var firstColumn = InvoiceUtil.GetColumnName("B5");
+        var firstColumn = InvoiceUtil.GetColumnName("B2");
         var lastColumn = InvoiceUtil.GetColumnName($"H{lastRow}");
 
         return new InvoiceRange(firstRowNum, lastRowNum, firstColumn, lastColumn);
@@ -30,10 +30,10 @@ public class InvoiceRange
 
     private static InvoiceRange InvoiceDetail(uint lastRow)
     {
-        var firstRowNum = InvoiceUtil.GetRowIndex("B5");
-        var lastRowNum = InvoiceUtil.GetRowIndex($"AA{lastRow}");
-        var firstColumn = InvoiceUtil.GetColumnName("Q5");
-        var lastColumn = InvoiceUtil.GetColumnName($"AA{lastRow}");
+        var firstRowNum = InvoiceUtil.GetRowIndex("B2");
+        var lastRowNum = InvoiceUtil.GetRowIndex($"U{lastRow}");
+        var firstColumn = InvoiceUtil.GetColumnName("Q2");
+        var lastColumn = InvoiceUtil.GetColumnName($"U{lastRow}");
 
         return new InvoiceRange(firstRowNum, lastRowNum, firstColumn, lastColumn);
     }
