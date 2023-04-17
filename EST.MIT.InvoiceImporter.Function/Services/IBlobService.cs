@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading.Tasks;
 
