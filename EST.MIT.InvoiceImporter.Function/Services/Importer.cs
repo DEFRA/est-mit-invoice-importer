@@ -31,10 +31,11 @@ namespace EST.MIT.Importer.Function.Services
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
             using (await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
             {
+                //TODO add call to invoice parser service 
                 await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
             }
         }
 
-        //TODO add call to invoice parser service 
+        
     }
 }
