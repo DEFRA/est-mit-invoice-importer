@@ -28,9 +28,9 @@ namespace EST.MIT.Importer.Function.Services
             ILogger log)
         {
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-            using (await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
+            using (await _blobService.ReadBLOBIntoStream(importMessage, blobBinder))
             {
-                await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
+                await _blobService.MoveFileToArchive(_blobService.GetFileName(), _blobServiceClient);
             }
         }
     }

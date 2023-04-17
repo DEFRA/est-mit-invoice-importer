@@ -15,13 +15,19 @@ namespace EST.MIT.InvoiceImporter.Function.Services
     public class BlobService : IBlobService
     {
         private string _fileName;
+        private readonly ILogger<BlobService> _logger;
 
-        public async Task<Stream> ReadBLOBIntoStream(string importMsg, ILogger log, IBinder blobBinder)
+        public BlobService(ILogger<BlobService> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task<Stream> ReadBLOBIntoStream(string importMsg, IBinder blobBinder)
         {
             Stream blobStream = null;
             if (importMsg == null)
             {
-                log.LogError("No import request received.");
+                _logger.LogError("No import request received.");
                 return blobStream;
             }
 
@@ -32,7 +38,7 @@ namespace EST.MIT.InvoiceImporter.Function.Services
             }
             catch (JsonException ex)
             {
-                log.LogError(ex, "Invalid import request received.");
+                _logger.LogError(ex, "Invalid import request received.");
                 return blobStream;
             }
 
@@ -46,7 +52,7 @@ namespace EST.MIT.InvoiceImporter.Function.Services
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<bool> MoveFileToArchive(string fileName, ILogger log, BlobServiceClient blobServiceClient)
+        public async Task<bool> MoveFileToArchive(string fileName, BlobServiceClient blobServiceClient)
         {
             try
             {
@@ -56,19 +62,19 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                 CopyFromUriOperation copyOperation = await destBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri);
                 await copyOperation.WaitForCompletionAsync();
                 await sourceBlobClient.DeleteIfExistsAsync();
-                log.LogInformation($"File {fileName} moved to archive folder.");
+                _logger.LogInformation($"File {fileName} moved to archive folder.");
                 return true;
             }
             catch (RequestFailedException ex)
             {
-                log.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
-                log.LogError(ex.ErrorCode);
+                _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+                _logger.LogError(ex.ErrorCode);
                 return false;
             }
             catch (Exception ex)
             {
-                log.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
-                log.LogError(ex.Message);
+                _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+                _logger.LogError(ex.Message);
                 return false;
             }
         }

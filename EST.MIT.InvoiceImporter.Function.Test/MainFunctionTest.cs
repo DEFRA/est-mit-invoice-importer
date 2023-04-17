@@ -42,9 +42,9 @@ namespace InvoiceImporter.Function.Tests
         {
 
             // Arrange
-            _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<IBinder>())).ReturnsAsync(new Mock<Stream>().Object);
+            _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), It.IsAny<IBinder>())).ReturnsAsync(new Mock<Stream>().Object);
             _mockBlobService.Setup(x => x.GetFileName()).Returns("testfile.csv");
-            _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
+            _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
 
             // Act 
             await _importer.QueueTrigger("some text", _mockBinder.Object, _mockLogger.Object);

@@ -15,7 +15,6 @@ namespace EST.MIT.Importer.Function.Services
         private readonly IConfiguration? _configuration;
         private readonly BlobServiceClient _blobServiceClient;
 
-
         public AzureBlobService(IConfiguration configuration)
         {
             _configuration = configuration;
