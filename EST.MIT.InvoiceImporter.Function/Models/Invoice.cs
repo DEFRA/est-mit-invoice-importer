@@ -21,8 +21,8 @@ public class Invoice
     public string Reference { get; set; } = default!;
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset Updated { get; set; }
-    public string CreatedBy { get; set; } = "";
-    public string UpdatedBy { get; set; } = "";
+    public string CreatedBy { get; set; }
+    public string UpdatedBy { get; set; }
 
 
     public Invoice()
