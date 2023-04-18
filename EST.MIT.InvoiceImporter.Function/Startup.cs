@@ -1,3 +1,4 @@
+using AzureServices;
 using EST.MIT.Importer.Function.Services;
 using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -15,6 +16,8 @@ namespace Startup.Function
         public override void Configure(IFunctionsHostBuilder builder)
         {
             Console.WriteLine("Configuring service...");
+
+            builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
 
             builder.Services.AddSingleton<IImporter, Importer>();
 

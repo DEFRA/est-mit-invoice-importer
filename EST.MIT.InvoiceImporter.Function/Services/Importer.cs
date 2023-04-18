@@ -1,10 +1,12 @@
 using Azure.Storage.Blobs;
 using AzureServices;
 using EST.MIT.InvoiceImporter.Function.Services;
+using InvoiceImporter.Function.Service;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace EST.MIT.Importer.Function.Services
@@ -14,6 +16,7 @@ namespace EST.MIT.Importer.Function.Services
         private readonly IBlobService _blobService;
         private readonly IConfiguration _configuration;
         private readonly BlobServiceClient _blobServiceClient;
+        public static IInvoiceParser InvoiceParser = new InvoiceParser();
 
         public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService)
         {
@@ -29,10 +32,10 @@ namespace EST.MIT.Importer.Function.Services
             ILogger log)
         {
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-            using (await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
+            using (Stream dataStream = await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
             {
                 //TODO add call to invoice parser service 
-
+                var invoices = await InvoiceParser.TryParse(dataStream, log);
                 await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
             }
         }

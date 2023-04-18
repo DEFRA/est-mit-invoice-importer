@@ -1,79 +1,113 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
+using System.IO.Pipelines;
+using System.Text;
+using System.Threading.Tasks;
+using InvoiceImporter.Function.Models;
 using Microsoft.Extensions.Logging;
-using InvoiceImporter.Function.Services;
 
-namespace EST.MIT.InvoiceImporter.Function.Services;
+namespace InvoiceImporter.Function.Service;
+
 public class InvoiceParser : IInvoiceParser
 {
-    private InvoiceRange invoiceRange;
+    private readonly byte[] _invoice;
+    private readonly byte _separator = (byte)',';
 
-    public List<T> Parse<T>(Stream blobStream, string invoiceAccountType, string invoiceItemType, ILogger log) where T : new()
+    public InvoiceParser()
     {
-        using SpreadsheetDocument doc = SpreadsheetDocument.Open(blobStream, false);
-        var worksheetPart = GetWorkSheet(doc, invoiceAccountType);
-        var lastRow = GetLastRowNum(worksheetPart);
-        invoiceRange = InvoiceRange.SelectInvoiceRange(invoiceItemType, lastRow);
-        var rows = GetRows(worksheetPart);
-        return GetCellValues<T>(doc, rows);
+        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType, CreatedBy");
     }
 
-    private static WorksheetPart GetWorkSheet(SpreadsheetDocument doc, string sheetName)
+    public async Task<List<Invoice>> TryParse(Stream reader, ILogger log)
     {
-        var workSheet = doc.WorkbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);
-        return (WorksheetPart)doc.WorkbookPart.GetPartById(workSheet.Id);
+        using var streamReader = new StreamReader(reader);
+
+        var invoiceLines = await Parse(streamReader);
+        return new List<Invoice>(invoiceLines);
     }
 
-    private IEnumerable<Row> GetRows(WorksheetPart worksheetPart)
+    private async Task<Invoice[]> Parse(StreamReader streamReader)
     {
-        return worksheetPart.Worksheet.GetFirstChild<SheetData>().Elements<Row>()
-            .Where(r => r.RowIndex.Value >= invoiceRange.FirstRowNum && r.RowIndex.Value <= invoiceRange.LastRowNum);
-    }
-
-    private static uint GetLastRowNum(WorksheetPart worksheetPart)
-    {
-        return worksheetPart.Worksheet.Descendants<Row>().LastOrDefault().RowIndex.Value;
-    }
-
-    private List<T> GetCellValues<T>(SpreadsheetDocument doc, IEnumerable<Row> rows) where T : new()
-    {
-        var cellValuesList = new List<T>();
-        var cellCount = 0;
-        foreach (var row in rows)
+        var invoicePool = ArrayPool<Invoice>.Shared;
+        var invoices = invoicePool.Rent(1000);
+        var position = 0;
+        var reader = PipeReader.Create(streamReader.BaseStream);
+        while (true)
         {
-            var invoiceValues = new Dictionary<int, string>();
+            var data = await reader.ReadAsync();
+            var dataBuffer = data.Buffer;
+            var actualPosition = ParseLine(dataBuffer, position, invoices);
+            reader.AdvanceTo(actualPosition, dataBuffer.End);
 
-            foreach (var cell in row.Descendants<Cell>())
+            if (data.IsCompleted)
+                break;
+        }
+
+        await reader.CompleteAsync();
+
+        invoicePool.Return(invoices);
+
+        return invoices;
+    }
+
+    private SequencePosition ParseLine(ReadOnlySequence<byte> dataBuffer, int position, Invoice[] invoices)
+    {
+        var reader = new SequenceReader<byte>(dataBuffer);
+        while (reader.TryReadTo(out ReadOnlySpan<byte> line, (byte)'\n'))
+        {
+            var invoice = GetInvoice(line);
+            if (invoice != null)
             {
-                var cellValue = GetCellValue(doc, cell);
-
-                var columnName = InvoiceUtil.GetColumnName(cell.CellReference.Value);
-                if (InvoiceUtil.CompareColumn(columnName, invoiceRange.FirstColumn) >= 0
-                    && InvoiceUtil.CompareColumn(columnName, invoiceRange.LastColumn) <= 0 && cellValue != null)
-                {
-                    invoiceValues.Add(cellCount, cellValue);
-                    cellCount++;
-                }
+                invoices[position] = invoice;
+                position++;
             }
-            cellValuesList.Add(InvoiceUtil.DictionaryToObject<T>(invoiceValues));
-            cellCount = 0;
         }
 
-        return cellValuesList;
+        return reader.Position;
     }
 
-    private static string GetCellValue(SpreadsheetDocument doc, Cell cell)
+    private Invoice GetInvoice(ReadOnlySpan<byte> line)
     {
-        string value = cell.CellValue?.InnerText;
-        if (cell.DataType?.Value == CellValues.SharedString)
+        if (line.IndexOf(_invoice) >= 0)
+            return null;
+
+        var record = new Invoice();
+
+        for (int i = 0; i < 5; i++)
         {
-            return doc.WorkbookPart.SharedStringTablePart.SharedStringTable.ChildElements.GetItem(int.Parse(value)).InnerText;
+            var index = line.IndexOf(_separator);
+            if (index < 0)
+            {
+                index = line.Length;
+            }
+
+            switch (i)
+            {
+                case 0:
+                    record.InvoiceType = Encoding.UTF8.GetString(line[..index]);
+                    break;
+                case 1:
+                    record.AccountType = Encoding.UTF8.GetString(line[..index]);
+                    break;
+                case 2:
+                    record.Organisation = Encoding.UTF8.GetString(line[..index]);
+                    break;
+                case 3:
+                    record.SchemeType = Encoding.UTF8.GetString(line[..index]);
+                    break;
+                case 4:
+                    record.CreatedBy = Encoding.UTF8.GetString(line[..index]);
+                    break;
+                case 5:
+                    record.Reference = Encoding.UTF8.GetString(line[..index]);
+                    return record;
+            }         
+            line = line[(index + 1)..];
         }
-        return value;
+
+        return record;
     }
 }
 
