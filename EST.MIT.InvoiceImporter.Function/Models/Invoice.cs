@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using CsvHelper.Configuration;
 
 namespace InvoiceImporter.Function.Models;
 
@@ -30,4 +31,13 @@ public class Invoice
         Id = Guid.NewGuid();
     }
 
+}
+
+public sealed class InvoiceMap : ClassMap<Invoice>
+{
+    public InvoiceMap()
+    {
+        Map(m => m.InvoiceType).Name("InvoiceType");
+        Map(m => m.AccountType).Name("AccountType");
+    }
 }

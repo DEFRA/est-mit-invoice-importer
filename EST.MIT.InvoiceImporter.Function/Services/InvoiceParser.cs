@@ -1,4 +1,9 @@
-﻿using System;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using CsvHelper.Delegates;
+using CsvHelper.Expressions;
+using CsvHelper.TypeConversion;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
@@ -17,9 +22,28 @@ public class InvoiceParser : IInvoiceParser
 
     public InvoiceParser()
     {
-        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType, Reference, Created, Updated, CreatedBy, UpdatedBy");
+        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType");//, Reference, Created, Updated, CreatedBy, UpdatedBy");
     }
 
+    public async Task<List<Invoice>> GetInvoicesAsync(Stream stream, ILogger log)
+    {
+        var result = new List<Invoice>();
+        try
+        {
+            log.LogInformation("Starting to import invoice");
+            int currentCount = 1;
+            using (var reader = new StreamReader(stream))
+            using (var csv = new CsvReader(reader))
+            {
+                csv.Configuration // RegisterClassMap<InvoiceMap>();
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
     public async Task<List<Invoice>> TryParse(Stream reader, ILogger log)
     {
         using var streamReader = new StreamReader(reader);
@@ -75,7 +99,7 @@ public class InvoiceParser : IInvoiceParser
 
         var record = new Invoice();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 4; i++)
         {
             var index = line.IndexOf(_separator);
             if (index < 0)
@@ -96,21 +120,21 @@ public class InvoiceParser : IInvoiceParser
                     break;
                 case 3:
                     record.SchemeType = Encoding.UTF8.GetString(line[..index]);
-                    break;
-                case 4:
-                    record.Reference = Encoding.UTF8.GetString(line[..index]);
-                    break;
-                case 5:
-                    //record.Created = DateTime.Parse(Encoding.UTF8.GetString(line[..index]));
-                    break;
-                case 6:
-                    //record.Updated = DateTime.Parse(Encoding.UTF8.GetString(line)[..index]);
-                    break;
-                case 7:
-                    record.CreatedBy = Encoding.UTF8.GetString(line[..index]);
-                    break;
-                case 8:
-                    record.UpdatedBy = Encoding.UTF8.GetString(line[..index]);
+                //    break;
+                //case 4:
+                //    record.Reference = Encoding.UTF8.GetString(line[..index]);
+                //    break;
+                //case 5:
+                //    //record.Created = DateTime.Parse(Encoding.UTF8.GetString(line[..index]));
+                //    break;
+                //case 6:
+                //    //record.Updated = DateTime.Parse(Encoding.UTF8.GetString(line)[..index]);
+                //    break;
+                //case 7:
+                //    record.CreatedBy = Encoding.UTF8.GetString(line[..index]);
+                //    break;
+                //case 8:
+                //    record.UpdatedBy = Encoding.UTF8.GetString(line[..index]);
 
                 return record;
             }         
