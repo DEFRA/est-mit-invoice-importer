@@ -17,7 +17,7 @@ public class InvoiceParser : IInvoiceParser
 
     public InvoiceParser()
     {
-        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType, CreatedBy, Updated, CreatedBy, UpdatedBy");
+        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType, Reference, Created Updated, CreatedBy, UpdatedBy");
     }
 
     public async Task<List<Invoice>> TryParse(Stream reader, ILogger log)
@@ -75,7 +75,7 @@ public class InvoiceParser : IInvoiceParser
 
         var record = new Invoice();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 11; i++)
         {
             var index = line.IndexOf(_separator);
             if (index < 0)
