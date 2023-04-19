@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using InvoiceImporter.Function.Models;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 namespace InvoiceImporter.Function.Service;
 
@@ -27,21 +28,39 @@ public class InvoiceParser : IInvoiceParser
 
     public async Task<List<Invoice>> GetInvoicesAsync(Stream stream, ILogger log)
     {
-        var result = new List<Invoice>();
+        List<Invoice> invoices = new List<Invoice>();
+        int count = 1;
         try
         {
             log.LogInformation("Starting to import invoice");
-            int currentCount = 1;
-            using (var reader = new StreamReader(stream))
-            using (var csv = new CsvReader(reader))
+            using var streamReader = new StreamReader(stream);
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration // RegisterClassMap<InvoiceMap>();
+                HasHeaderRecord= true,
+                Delimiter = ","
+            };
+            using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<InvoiceMap>();
+                while (csv.Read())
+                {
+                    try
+                    {
+                        invoices.Add(csv.GetRecord<Invoice>());
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new InvalidOperationException("Unknown record type. - " + ex.Message);
+                    }
+                    count++;
+                }
             }
+            log.LogInformation("Finished reading {0} records", count);
+            return await Task.FromResult(invoices);
         }
-        catch (Exception)
+        catch (Exception exc)
         {
-
-            throw;
+            throw new AggregateException("Error during Invoice import - " + exc.Message);
         }
     }
     public async Task<List<Invoice>> TryParse(Stream reader, ILogger log)
