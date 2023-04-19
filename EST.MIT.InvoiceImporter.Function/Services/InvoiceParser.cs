@@ -17,7 +17,7 @@ public class InvoiceParser : IInvoiceParser
 
     public InvoiceParser()
     {
-        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType, Reference, Created Updated, CreatedBy, UpdatedBy");
+        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType, Reference, Created, Updated, CreatedBy, UpdatedBy");
     }
 
     public async Task<List<Invoice>> TryParse(Stream reader, ILogger log)
@@ -75,7 +75,7 @@ public class InvoiceParser : IInvoiceParser
 
         var record = new Invoice();
 
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i < 10; i++)
         {
             var index = line.IndexOf(_separator);
             if (index < 0)
@@ -98,26 +98,21 @@ public class InvoiceParser : IInvoiceParser
                     record.SchemeType = Encoding.UTF8.GetString(line[..index]);
                     break;
                 case 4:
-                    record.Status = default;
-                    break;
-                case 5:
                     record.Reference = Encoding.UTF8.GetString(line[..index]);
                     break;
+                case 5:
+                    //record.Created = DateTime.Parse(Encoding.UTF8.GetString(line[..index]));
+                    break;
                 case 6:
-                    record.Created = DateTime.Parse(Encoding.UTF8.GetString(line[..index]));
+                    //record.Updated = DateTime.Parse(Encoding.UTF8.GetString(line)[..index]);
                     break;
                 case 7:
                     record.CreatedBy = Encoding.UTF8.GetString(line[..index]);
                     break;
                 case 8:
-                    record.Updated = DateTime.Parse(Encoding.UTF8.GetString(line)[..index]);
-                    break;
-                case 9:
-                    record.CreatedBy = Encoding.UTF8.GetString(line[..index]);
-                    break;
-                case 10:
                     record.UpdatedBy = Encoding.UTF8.GetString(line[..index]);
-                    return record;
+
+                return record;
             }         
             line = line[(index + 1)..];
         }
