@@ -37,7 +37,8 @@ public class InvoiceParser : IInvoiceParser
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 HasHeaderRecord= true,
-                Delimiter = ","
+                Delimiter = ",",
+                Quote = '"',
             };
             using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {

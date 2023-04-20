@@ -20,8 +20,8 @@ public class Invoice
     public List<PaymentRequest> PaymentRequests { get; set; } = new List<PaymentRequest>();
     public string Status { get; set; } = "new";
     public string Reference { get; set; } = default!;
-    //public DateTimeOffset Created { get; set; }
-    //public DateTimeOffset Updated { get; set; }
+    public DateTimeOffset Created { get; set; }
+    public DateTimeOffset Updated { get; set; }
     public string CreatedBy { get; set; } 
     public string UpdatedBy { get; set; }
 
@@ -42,11 +42,9 @@ public sealed class InvoiceMap : ClassMap<Invoice>
         Map(m => m.Organisation).Name("Organisation");
         Map(m => m.SchemeType).Name("SchemeType");
         Map(m => m.Reference).Name("Reference");
-        //Map(m => m.Created).Name("Created");
-        //Map(m => m.Updated).Name("Updated");
+        Map(m => m.Created).Name("Created").TypeConverterOption.Format("dd/MM/yyyy HH:mm");
+        Map(m => m.Updated).Name("Updated").TypeConverterOption.Format("dd/MM/yyyy HH:mm");
         Map(m => m.CreatedBy).Name("CreatedBy");
         Map(m => m.UpdatedBy).Name("UpdatedBy");
-
-
     }
 }
