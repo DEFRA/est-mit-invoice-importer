@@ -5,11 +5,9 @@ using CsvHelper.Configuration;
 
 namespace InvoiceImporter.Function.Models;
 
-public class Invoice
+public class InputData
 {
     [Required]
-    public Guid Id { get; set; }
-    [Required(ErrorMessage = "Invoice Type is required")]
     public string InvoiceType { get; set; } = default!;
     [Required(ErrorMessage = "Account Type is required")]
     public string AccountType { get; set; } = default!;
@@ -24,9 +22,20 @@ public class Invoice
     public DateTimeOffset Updated { get; set; }
     public string CreatedBy { get; set; } 
     public string UpdatedBy { get; set; }
+}
 
-    public Invoice()
+public sealed class InputDataMap : ClassMap<InputData>
+{
+    public InputDataMap()
     {
-        Id = Guid.NewGuid();
+        Map(m => m.InvoiceType).Name("InvoiceType");
+        Map(m => m.AccountType).Name("AccountType");
+        Map(m => m.Organisation).Name("Organisation");
+        Map(m => m.SchemeType).Name("SchemeType");
+        Map(m => m.Reference).Name("Reference");
+        Map(m => m.Created).Name("Created").TypeConverterOption.Format("dd/MM/yyyy HH:mm");
+        Map(m => m.Updated).Name("Updated").TypeConverterOption.Format("dd/MM/yyyy HH:mm");
+        Map(m => m.CreatedBy).Name("CreatedBy");
+        Map(m => m.UpdatedBy).Name("UpdatedBy");
     }
 }

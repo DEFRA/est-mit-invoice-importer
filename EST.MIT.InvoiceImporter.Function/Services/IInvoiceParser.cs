@@ -9,5 +9,5 @@ namespace InvoiceImporter.Function.Service;
 public interface IInvoiceParser
 {
     //Task<List<Invoice>> TryParse(Stream reader, ILogger log);
-    Task<List<Invoice>> GetInvoicesAsync(Stream stream, ILogger log);
+    Task<List<InputData>> GetInvoicesAsync(Stream stream, ILogger log);
 }

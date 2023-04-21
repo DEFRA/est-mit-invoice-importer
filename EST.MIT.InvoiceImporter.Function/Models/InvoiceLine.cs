@@ -9,6 +9,4 @@ public class InvoiceLine
     public string Description { get; set; } = default!;
     public string SchemeCode { get; set; } = default!;
     public string DeliveryBody { get; set; } = "RP00";
-
 }
-
