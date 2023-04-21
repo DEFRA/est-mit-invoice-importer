@@ -29,4 +29,15 @@ public class PaymentRequest
     public double Value { get; set; } = 0.00;
     public List<InvoiceLine> InvoiceLines { get; set; } = new List<InvoiceLine>();
 
+    public PaymentRequest()
+    {
+        InvoiceLines = new List<InvoiceLine>();
+    }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(this, new ValidationContext(this), results, validateAllProperties: true);
+        return results;
+    }
 }

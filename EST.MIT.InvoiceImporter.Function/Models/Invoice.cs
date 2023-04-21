@@ -29,4 +29,11 @@ public class Invoice
     {
         Id = Guid.NewGuid();
     }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(this, new ValidationContext(this), results, validateAllProperties: true);
+        return results;
+    }
 }

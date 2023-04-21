@@ -1,14 +1,8 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using CsvHelper.Delegates;
-using CsvHelper.Expressions;
-using CsvHelper.TypeConversion;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipelines;
-using System.Text;
 using System.Threading.Tasks;
 using InvoiceImporter.Function.Models;
 using Microsoft.Extensions.Logging;
@@ -18,30 +12,57 @@ namespace InvoiceImporter.Function.Service;
 
 public class InvoiceParser : IInvoiceParser
 {
-    private readonly byte[] _invoice;
-    private readonly byte _separator = (byte)',';
-
     public InvoiceParser()
     {
-        _invoice = Encoding.UTF8.GetBytes("InvoiceType, AccountType, Organisation, SchemeType");//, Reference, Created, Updated, CreatedBy, UpdatedBy");
+
     }
 
-    public async Task<List<Invoice>> GetInvoicesAsync(List<InputData> inputData)
+    public async Task<List<Invoice>> GetInvoicesAsync(Stream stream, ILogger log)
     {
-        List<Invoice> invoiceList = new List<Invoice>();
-        InvoiceLine
+        var inputData = await GetInputDataAsync(stream, log);
+        List<Invoice> invoiceList = new (); //Empty top level class
         try
         {
-            foreach (var inputRecord in inputData)
+            foreach (var inputRecord in inputData) //Loop through raw input data records
             {
-                var invoice = new Invoice()
+                var invoice = new Invoice() //Create a new invoice record (top level)
                 {
                     Id = Guid.NewGuid(),
                     AccountType = inputRecord.AccountType,
                     InvoiceType = inputRecord.InvoiceType,
-                }
-                invoiceList.Add(invoice);
+                    PaymentRequests = new List<PaymentRequest>()
+                    {
+                        new PaymentRequest
+                        {
+                            PaymentRequestId = Guid.NewGuid().ToString(),
+                            //TODO: Add these to the input CSV and the unit test csv mockup
+                            //Currency = inputRecord.Currency,
+                            SourceSystem = "Manual",
+                            InvoiceLines = new List<InvoiceLine>()
+                            {
+                                new InvoiceLine()
+                                {
+                                    //TODO: Add these to the input CSV and the unit test csv mockup
+                                    //Value = inputRecord.Value,
+                                    //Description = inputRecord.Description,
+                                    //SchemeCode = inputRecord.SchemeCode,
+                                    //DeliveryBody = inputRecord.DeliveryBody                                    
+                                }
+                            }
 
+                        }
+                    }
+                };
+                //Check if the invoice is valid
+                //First check for null values
+                if (invoice.AccountType == null || invoice.InvoiceType == null)
+                {
+                    throw new InvalidOperationException("Invalid invoice record");
+                }
+                else
+                {
+                    invoiceList.Add(invoice);
+                }
             }
             return await Task.FromResult(invoiceList);
         }
@@ -51,13 +72,13 @@ public class InvoiceParser : IInvoiceParser
         }
     }
 
-    public async Task<List<InputData>> GetInputDataAsync(Stream stream, ILogger log)
+    private static async Task<List<InputData>> GetInputDataAsync(Stream stream, ILogger log)
     {
-        List<InputData> inputData = new List<InputData>();
-        int count = 1;
+        List<InputData> inputData = new ();
+        int count = 0;
         try
         {
-            log.LogInformation("Starting to import invoice");
+            log.LogInformation("Starting to import data from data stream...");
             using var streamReader = new StreamReader(stream);
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -67,7 +88,7 @@ public class InvoiceParser : IInvoiceParser
             };
             using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
-                csv.Context.RegisterClassMap<InvoiceMap>();
+                csv.Context.RegisterClassMap<InputDataMap>();
                 while (csv.Read())
                 {
                     try
@@ -81,7 +102,7 @@ public class InvoiceParser : IInvoiceParser
                     count++;
                 }
             }
-            log.LogInformation("Finished reading {0} records", count);
+            log.LogInformation("Finished reading {0} records from data stream", count);
             return await Task.FromResult(inputData);
         }
         catch (Exception exc)
@@ -89,104 +110,4 @@ public class InvoiceParser : IInvoiceParser
             throw new AggregateException("Error during Invoice import - " + exc.Message);
         }
     }
-    //public async Task<List<InputData>> TryParse(Stream reader, ILogger log)
-    //{
-    //    using var streamReader = new StreamReader(reader);
-
-    //    var invoiceLines = await Parse(streamReader);
-    //    return new List<InputData>(invoiceLines);
-    //}
-
-    //private async Task<InputData[]> Parse(StreamReader streamReader)
-    //{
-    //    var invoicePool = ArrayPool<InputData>.Shared;
-    //    var invoices = invoicePool.Rent(1000);
-    //    var position = 0;
-    //    var reader = PipeReader.Create(streamReader.BaseStream);
-    //    while (true)
-    //    {
-    //        var data = await reader.ReadAsync();
-    //        var dataBuffer = data.Buffer;
-    //        var actualPosition = ParseLine(dataBuffer, position, invoices);
-    //        reader.AdvanceTo(actualPosition, dataBuffer.End);
-
-    //        if (data.IsCompleted)
-    //            break;
-    //    }
-
-    //    await reader.CompleteAsync();
-
-    //    invoicePool.Return(invoices);
-
-    //    return invoices;
-    //}
-
-    //private SequencePosition ParseLine(ReadOnlySequence<byte> dataBuffer, int position, InputData[] invoices)
-    //{
-    //    var reader = new SequenceReader<byte>(dataBuffer);
-    //    while (reader.TryReadTo(out ReadOnlySpan<byte> line, (byte)'\n'))
-    //    {
-    //        var invoice = GetInvoice(line);
-    //        if (invoice != null)
-    //        {
-    //            invoices[position] = invoice;
-    //            position++;
-    //        }
-    //    }
-
-    //    return reader.Position;
-    //}
-
-    //private InputData GetInvoice(ReadOnlySpan<byte> line)
-    //{
-    //    if (line.IndexOf(_invoice) >= 0)
-    //        return null;
-
-    //    var record = new Invoice();
-
-    //    for (int i = 0; i < 4; i++)
-    //    {
-    //        var index = line.IndexOf(_separator);
-    //        if (index < 0)
-    //        {
-    //            index = line.Length;
-    //        }
-
-    //        switch (i)
-    //        {
-    //            case 0:
-    //                record.InvoiceType = Encoding.UTF8.GetString(line[..index]);
-    //                break;
-    //            case 1:
-    //                record.AccountType = Encoding.UTF8.GetString(line[..index]);
-    //                break;
-    //            case 2:
-    //                record.Organisation = Encoding.UTF8.GetString(line[..index]);
-    //                break;
-    //            case 3:
-    //                record.SchemeType = Encoding.UTF8.GetString(line[..index]);
-    //            //    break;
-    //            //case 4:
-    //            //    record.Reference = Encoding.UTF8.GetString(line[..index]);
-    //            //    break;
-    //            //case 5:
-    //            //    //record.Created = DateTime.Parse(Encoding.UTF8.GetString(line[..index]));
-    //            //    break;
-    //            //case 6:
-    //            //    //record.Updated = DateTime.Parse(Encoding.UTF8.GetString(line)[..index]);
-    //            //    break;
-    //            //case 7:
-    //            //    record.CreatedBy = Encoding.UTF8.GetString(line[..index]);
-    //            //    break;
-    //            //case 8:
-    //            //    record.UpdatedBy = Encoding.UTF8.GetString(line[..index]);
-
-    //            return record;
-    //        }         
-    //        line = line[(index + 1)..];
-    //    }
-
-    //    return record;
-    //}
 }
-
