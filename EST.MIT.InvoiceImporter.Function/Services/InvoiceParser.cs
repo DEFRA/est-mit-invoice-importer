@@ -20,12 +20,12 @@ public class InvoiceParser : IInvoiceParser
     public async Task<List<Invoice>> GetInvoicesAsync(Stream stream, ILogger log)
     {
         var inputData = await GetInputDataAsync(stream, log);
-        List<Invoice> invoiceList = new(); //Empty top level class
+        List<Invoice> invoiceList = new();
         try
         {
-            foreach (var inputRecord in inputData) //Loop through raw input data records
+            foreach (var inputRecord in inputData)
             {
-                var invoice = new Invoice() //Create a new invoice record (top level)
+                var invoice = new Invoice()
                 {
                     Id = Guid.NewGuid(),
                     InvoiceType = inputRecord.InvoiceType,
@@ -42,8 +42,6 @@ public class InvoiceParser : IInvoiceParser
                         new PaymentRequest
                         {
                             PaymentRequestId = Guid.NewGuid().ToString(),
-                            //TODO: Add these to the input CSV and the unit test csv mockup
-                            //Currency = inputRecord.Currency,
                             SourceSystem = "Manual",
                             FRN = inputRecord.FRN,
                             MarketingYear = inputRecord.MarketingYear,
@@ -56,7 +54,6 @@ public class InvoiceParser : IInvoiceParser
                             {
                                 new InvoiceLine()
                                 {
-                                    //TODO: Add these to the input CSV and the unit test csv mockup
                                     Value = inputRecord.LineValue,
                                     Description = inputRecord.Description,
                                     SchemeCode = inputRecord.SchemeCode,
@@ -67,8 +64,7 @@ public class InvoiceParser : IInvoiceParser
                         }
                     }
                 };
-                //Check if the invoice is valid
-                //First check for null values
+
                 if (invoice.AccountType == null || 
                     invoice.InvoiceType == null
                     
