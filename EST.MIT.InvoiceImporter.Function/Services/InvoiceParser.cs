@@ -101,7 +101,7 @@ public class InvoiceParser : IInvoiceParser
             {
                 HasHeaderRecord = true,
                 Delimiter = ",",
-                //Quote = '"',
+                Quote = '"',
             };
             using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
