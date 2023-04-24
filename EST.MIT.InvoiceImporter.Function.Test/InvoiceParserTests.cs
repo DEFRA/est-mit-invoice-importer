@@ -1,11 +1,7 @@
 ﻿using InvoiceImporter.Function.Service;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EST.MIT.InvoiceImporter.Function.Test
 {
@@ -24,8 +20,8 @@ namespace EST.MIT.InvoiceImporter.Function.Test
         public async Task ReadCSVIntoObject_ReturnsData()
         {
             //Arrange
-            var csvData = "InvoiceType,AccountType,Organisation,SchemeType,Reference,Created,Updated,CreatedBy,UpdatedBy\r\n" + 
-                          "First ,AP,\"Noonans Free range Eggs Ltd\",Scheme1,Reference1,18/04/2023 12:48,18/04/2023 12:48,M186895,M186895\r\n" + 
+            var csvData = "InvoiceType,AccountType,Organisation,SchemeType,Reference,Created,Updated,CreatedBy,UpdatedBy\r\n" +
+                          "First ,AP,\"Noonans Free range Eggs Ltd\",Scheme1,Reference1,18/04/2023 12:48,18/04/2023 12:48,M186895,M186895\r\n" +
                           "Amendment,AR,\"Nicks Cow farm\",Scheme2,Reference2,19/04/2023 12:48,19/04/2023 12:48,M186895,M186895\r\n";
             var csvStream = new MemoryStream(Encoding.UTF8.GetBytes(csvData));
 

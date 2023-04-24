@@ -1,12 +1,12 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using InvoiceImporter.Function.Models;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace InvoiceImporter.Function.Service;
 
@@ -65,9 +65,9 @@ public class InvoiceParser : IInvoiceParser
                     }
                 };
 
-                if (invoice.AccountType == null || 
+                if (invoice.AccountType == null ||
                     invoice.InvoiceType == null
-                    
+
                     )
                 {
                     throw new InvalidOperationException("Invalid invoice record");

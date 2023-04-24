@@ -35,9 +35,9 @@ namespace EST.MIT.Importer.Function.Services
             using (Stream dataStream = await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
             {
                 var invoices = await InvoiceParser.GetInvoicesAsync(dataStream, log);
-                
+
                 await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
             }
-        }       
+        }
     }
 }
