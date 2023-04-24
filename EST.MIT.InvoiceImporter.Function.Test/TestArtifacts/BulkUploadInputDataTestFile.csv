@@ -1,3 +1,3 @@
-InvoiceType,AccountType,Organisation,SchemeType,Reference,Created,Updated,CreatedBy,UpdatedBy,SourceSystem ,FRN,MarketingYear,PaymentRequestNumber,AgreementNumber,Currency,DueDate,Value,Value ,Description,SchemeCode,DeliveryBody
+InvoiceType,AccountType,Organisation,SchemeType,Reference,Created,Updated,CreatedBy,UpdatedBy,SourceSystem,FRN,MarketingYear,PaymentRequestNumber,AgreementNumber,Currency,DueDate,PaymentRequestValue,LineValue,Description,SchemeCode,DeliveryBody
 First ,AP,Noonans Free range Eggs Ltd,Scheme1,Reference1,18/04/2023 12:48,18/04/2023 12:48,M186895,M186895,Manual ,1234567890,2022,1,AHWR12345678,GBP,18/04/2023,500,500,"""G00 - Gross value of claim""",12345A,RP00
 Amendment,AR,Nicks Stud farm,Scheme2,Reference2,19/04/2023 12:48,19/04/2023 12:48,M186895,M186895,Manual ,1234567890,2023,2,HARW32165487,GBP,18/04/2023,250,250,"""P14 - Cross compliance penalty""",12345A,RP00

@@ -69,7 +69,10 @@ public class InvoiceParser : IInvoiceParser
                 };
                 //Check if the invoice is valid
                 //First check for null values
-                if (invoice.AccountType == null || invoice.InvoiceType == null)
+                if (invoice.AccountType == null || 
+                    invoice.InvoiceType == null
+                    
+                    )
                 {
                     throw new InvalidOperationException("Invalid invoice record");
                 }
@@ -98,7 +101,7 @@ public class InvoiceParser : IInvoiceParser
             {
                 HasHeaderRecord = true,
                 Delimiter = ",",
-                Quote = '"',
+                //Quote = '"',
             };
             using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
             {
