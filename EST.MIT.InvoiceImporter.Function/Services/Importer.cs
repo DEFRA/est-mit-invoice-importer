@@ -32,12 +32,10 @@ namespace EST.MIT.Importer.Function.Services
             ILogger log)
         {
             log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-            using (Stream dataStream = await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder))
-            {
-                var invoices = await InvoiceParser.GetInvoicesAsync(dataStream, log);
+            using Stream dataStream = await _blobService.ReadBLOBIntoStream(importMessage, log, blobBinder);
+            var invoices = await InvoiceParser.GetInvoicesAsync(dataStream, log);
 
-                await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
-            }
+            await _blobService.MoveFileToArchive(_blobService.GetFileName(), log, _blobServiceClient);
         }
     }
 }
