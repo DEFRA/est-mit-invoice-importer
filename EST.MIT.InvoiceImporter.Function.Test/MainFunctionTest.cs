@@ -39,9 +39,8 @@ namespace InvoiceImporter.Function.Tests
         }
 
         [Fact]
-        public async void QueueTrigger_Valid_Request()
+        public async void QueueTrigger_InValid_Request()
         {
-
             // Arrange
             _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<IBinder>())).ReturnsAsync(new Mock<Stream>().Object);
             _mockBlobService.Setup(x => x.GetFileName()).Returns("testfile.csv");

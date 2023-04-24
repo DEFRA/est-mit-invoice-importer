@@ -20,7 +20,7 @@ public class InvoiceParser : IInvoiceParser
     public async Task<List<Invoice>> GetInvoicesAsync(Stream stream, ILogger log)
     {
         var inputData = await GetInputDataAsync(stream, log);
-        List<Invoice> invoiceList = new (); //Empty top level class
+        List<Invoice> invoiceList = new(); //Empty top level class
         try
         {
             foreach (var inputRecord in inputData) //Loop through raw input data records
@@ -28,8 +28,15 @@ public class InvoiceParser : IInvoiceParser
                 var invoice = new Invoice() //Create a new invoice record (top level)
                 {
                     Id = Guid.NewGuid(),
-                    AccountType = inputRecord.AccountType,
                     InvoiceType = inputRecord.InvoiceType,
+                    AccountType = inputRecord.AccountType,
+                    Organisation = inputRecord.Organisation,
+                    SchemeType = inputRecord.SchemeType,
+                    Reference = inputRecord.Reference,
+                    Created = inputRecord.Created,
+                    Updated = inputRecord.Updated,
+                    CreatedBy = inputRecord.CreatedBy,
+                    UpdatedBy = inputRecord.UpdatedBy,
                     PaymentRequests = new List<PaymentRequest>()
                     {
                         new PaymentRequest
@@ -38,15 +45,22 @@ public class InvoiceParser : IInvoiceParser
                             //TODO: Add these to the input CSV and the unit test csv mockup
                             //Currency = inputRecord.Currency,
                             SourceSystem = "Manual",
+                            FRN = inputRecord.FRN,
+                            MarketingYear = inputRecord.MarketingYear,
+                            PaymentRequestNumber = inputRecord.PaymentRequestNumber,
+                            AgreementNumber = inputRecord.AgreementNumber,
+                            Currency = inputRecord.Currency,
+                            DueDate = inputRecord.DueDate,
+                            Value = inputRecord.PaymentRequestValue,
                             InvoiceLines = new List<InvoiceLine>()
                             {
                                 new InvoiceLine()
                                 {
                                     //TODO: Add these to the input CSV and the unit test csv mockup
-                                    //Value = inputRecord.Value,
-                                    //Description = inputRecord.Description,
-                                    //SchemeCode = inputRecord.SchemeCode,
-                                    //DeliveryBody = inputRecord.DeliveryBody                                    
+                                    Value = inputRecord.LineValue,
+                                    Description = inputRecord.Description,
+                                    SchemeCode = inputRecord.SchemeCode,
+                                    DeliveryBody = inputRecord.DeliveryBody
                                 }
                             }
 
@@ -74,7 +88,7 @@ public class InvoiceParser : IInvoiceParser
 
     private static async Task<List<InputData>> GetInputDataAsync(Stream stream, ILogger log)
     {
-        List<InputData> inputData = new ();
+        List<InputData> inputData = new();
         int count = 0;
         try
         {
@@ -82,7 +96,7 @@ public class InvoiceParser : IInvoiceParser
             using var streamReader = new StreamReader(stream);
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                HasHeaderRecord= true,
+                HasHeaderRecord = true,
                 Delimiter = ",",
                 Quote = '"',
             };
