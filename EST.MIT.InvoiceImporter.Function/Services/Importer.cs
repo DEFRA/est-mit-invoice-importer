@@ -16,7 +16,7 @@ namespace EST.MIT.Importer.Function.Services
         private readonly IBlobService _blobService;
         private readonly IConfiguration _configuration;
         private readonly BlobServiceClient _blobServiceClient;
-        public static IInvoiceParser InvoiceParser = new InvoiceParser();
+        private static readonly IInvoiceParser InvoiceParser = new InvoiceParser();
 
         public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService)
         {
