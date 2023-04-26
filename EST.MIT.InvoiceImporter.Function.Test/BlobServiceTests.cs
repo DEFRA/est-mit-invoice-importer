@@ -19,10 +19,10 @@ namespace EST.MIT.InvoiceImporter.Function.Services.Tests
             var blobStream = new MemoryStream();
             blobBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), CancellationToken.None)).ReturnsAsync(blobStream);
             var logger = new Mock<ILogger<BlobService>>();
-            var blobService = new BlobService();
+            var blobService = new BlobService(logger.Object);
 
             // Act
-            var result = await blobService.ReadBLOBIntoStream(importRequestJson, logger.Object, blobBinder.Object);
+            var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
             // Assert
             Assert.NotNull(result);
@@ -36,10 +36,10 @@ namespace EST.MIT.InvoiceImporter.Function.Services.Tests
             var importRequestJson = "invalid-json";
             var blobBinder = new Mock<IBinder>();
             var logger = new Mock<ILogger<BlobService>>();
-            var blobService = new BlobService();
+            var blobService = new BlobService(logger.Object);
 
             // Act
-            var result = await blobService.ReadBLOBIntoStream(importRequestJson, logger.Object, blobBinder.Object);
+            var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
             // Assert
             Assert.Null(result);
@@ -52,10 +52,10 @@ namespace EST.MIT.InvoiceImporter.Function.Services.Tests
             string? importRequestJson = null;
             var blobBinder = new Mock<IBinder>();
             var logger = new Mock<ILogger<BlobService>>();
-            var blobService = new BlobService();
+            var blobService = new BlobService(logger.Object);
 
             // Act
-            var result = await blobService.ReadBLOBIntoStream(importRequestJson, logger.Object, blobBinder.Object);
+            var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
             // Assert
             Assert.Null(result);
@@ -65,8 +65,9 @@ namespace EST.MIT.InvoiceImporter.Function.Services.Tests
         public void GetFileName_ReturnsFileName()
         {
             // Arrange
+            var logger = new Mock<ILogger<BlobService>>();
             var expectedFileName = "test-file.txt";
-            var blobService = new BlobService();
+            var blobService = new BlobService(logger.Object);
 
             blobService.GetType().GetField("_fileName", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(blobService, expectedFileName);
 

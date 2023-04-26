@@ -14,7 +14,7 @@ namespace Startup.Function
         [ExcludeFromCodeCoverage]
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            Console.WriteLine("Configuring service...");
+            Console.WriteLine("Configuring services...");
 
             builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
 
