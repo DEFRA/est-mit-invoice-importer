@@ -6,6 +6,9 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.IO.Compression;
+using System.Reflection.Metadata;
+using System.Text;
 
 namespace InvoiceImporter.Function.Tests
 {
@@ -22,7 +25,8 @@ namespace InvoiceImporter.Function.Tests
             _mockLogger = new Mock<ILogger>();
             _mockBinder = new Mock<IBinder>();
             _mockBlobService = new Mock<IBlobService>();
-
+            
+            var blobBinder = new Mock<IBinder>();
             var mockConfig = new Mock<IConfiguration>();
             var mockConfigSection = new Mock<IConfigurationSection>();
             mockConfigSection.Setup(x => x.Value).Returns("some_text");
@@ -42,7 +46,9 @@ namespace InvoiceImporter.Function.Tests
         public async void QueueTrigger_InValid_Request()
         {
             // Arrange
-            _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<IBinder>())).ReturnsAsync(new Mock<Stream>().Object);
+            var blobStream = new MemoryStream(Encoding.UTF8.GetBytes("whatever"));
+            _mockBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), CancellationToken.None)).ReturnsAsync(blobStream);
+            _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<IBinder>())).ReturnsAsync(blobStream);
             _mockBlobService.Setup(x => x.GetFileName()).Returns("testfile.csv");
             _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
 
