@@ -1,6 +1,7 @@
 # Introduction 
 This Repository contains the code for the function app which parses bulk upload data from blob storage when triggered from the message queue. 
-It reads the bulk invoice spreadsheet data to be imported from blob storage, checks it for validation errors and sends the validated data onto the invoice service.
+It reads the bulk invoice csv file to be imported from blob storage, checks it for validation errors, parses it into invoice objects and sends the validated invoice
+data onto the invoice service.
 
 ## Entry Queue
 The function app requires:
@@ -12,6 +13,10 @@ The function app uses Azure Storage for Table and Queue storage.
 ### Storage Name
 
 'invoices/import'
+This is the location where it picks up the input data from the UI. 
+
+'invoices/archive'
+This is the location where it puts the file once processed. 
 
 ## Destination Endpoint
 

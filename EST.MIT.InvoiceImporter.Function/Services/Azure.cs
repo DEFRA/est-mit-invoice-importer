@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EST.MIT.Importer.Function.Services
+namespace EST.MIT.InvoiceImporter.Function.Services
 {
     public interface IAzureBlobService
     {
@@ -15,6 +15,7 @@ namespace EST.MIT.Importer.Function.Services
         private readonly IConfiguration? _configuration;
         private readonly BlobServiceClient _blobServiceClient;
 
+
         public AzureBlobService(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -25,4 +26,3 @@ namespace EST.MIT.Importer.Function.Services
         public BlobServiceClient? BlobServiceClient { get; set; }
     }
 }
-

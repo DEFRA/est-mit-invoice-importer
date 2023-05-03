@@ -18,6 +18,8 @@ namespace Startup.Function
 
             builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
 
+            builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
+
             builder.Services.AddSingleton<IImporter, Importer>();
 
             builder.Services.AddSingleton<IBlobService, BlobService>();

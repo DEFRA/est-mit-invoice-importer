@@ -1,0 +1,3 @@
+InvoiceType,AccountType,Organisation,SchemeType,Reference,Created,Updated,CreatedBy,UpdatedBy
+First ,AP,"Noonans Free range Eggs Ltd",Scheme1,Reference1,18/04/2023 12:48,18/04/2023 12:48,M186895,M186895
+Amendment,AR,"Nicks Cow farm",Scheme2,Reference2,19/04/2023 12:48,19/04/2023 12:48,M186895,M186895
