@@ -6,8 +6,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.IO.Compression;
-using System.Reflection.Metadata;
 using System.Text;
 
 namespace InvoiceImporter.Function.Tests
@@ -25,7 +23,7 @@ namespace InvoiceImporter.Function.Tests
             _mockLogger = new Mock<ILogger>();
             _mockBinder = new Mock<IBinder>();
             _mockBlobService = new Mock<IBlobService>();
-            
+
             var blobBinder = new Mock<IBinder>();
             var mockConfig = new Mock<IConfiguration>();
             var mockConfigSection = new Mock<IConfigurationSection>();
@@ -37,9 +35,7 @@ namespace InvoiceImporter.Function.Tests
             var mockAzureBlobService = new Mock<IAzureBlobService>();
             mockAzureBlobService.Setup(x => x.BlobServiceClient).Returns(mockBlobServiceClient.Object);
 
-            var mockBlobService = new Mock<IBlobService>();
-
-            _importer = new Importer(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object);
+            _importer = new Importer(_mockBlobService.Object, _configuration, mockAzureBlobService.Object);
         }
 
         [Fact]
@@ -47,13 +43,13 @@ namespace InvoiceImporter.Function.Tests
         {
             // Arrange
             var blobStream = new MemoryStream(Encoding.UTF8.GetBytes("whatever"));
-            _mockBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), CancellationToken.None)).ReturnsAsync(blobStream);
-            _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<IBinder>())).ReturnsAsync(blobStream);
+            _mockBinder.Setup(x => x.BindAsync<Stream>(It.IsAny<BlobAttribute>(), CancellationToken.None)).ReturnsAsync(blobStream);
+            _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), It.IsAny<ILogger>(), It.IsAny<IBinder>())).ReturnsAsync(blobStream);
             _mockBlobService.Setup(x => x.GetFileName()).Returns("testfile.csv");
-            _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), new Mock<ILogger>().Object, It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
+            _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<ILogger>(), It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
 
             // Act 
-            await _importer.QueueTrigger("some text", _mockBinder.Object, _mockLogger.Object);
+            await Assert.ThrowsAsync<AggregateException>(() => _importer.QueueTrigger("some text", _mockBinder.Object, _mockLogger.Object));
 
             // Assert
             _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);

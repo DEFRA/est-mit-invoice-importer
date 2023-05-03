@@ -1,12 +1,7 @@
-﻿using DocumentFormat.OpenXml.VariantTypes;
-using DocumentFormat.OpenXml;
-using InvoiceImporter.Function.Service;
+﻿using InvoiceImporter.Function.Service;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 using Moq;
-using System.Data;
 using System.Text;
-using DocumentFormat.OpenXml.Bibliography;
 
 namespace EST.MIT.InvoiceImporter.Function.Test
 {
