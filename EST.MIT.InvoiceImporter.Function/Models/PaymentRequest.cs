@@ -17,7 +17,6 @@ public class PaymentRequest
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "The Payment Request Number must be greater than 0")]
     public int PaymentRequestNumber { get; set; }
-    //Invoice Number
     [Required(ErrorMessage = "The Agreement Number is required")]
     public string AgreementNumber { get; set; } = string.Empty;
     [Required]
