@@ -9,6 +9,6 @@ namespace EST.MIT.InvoiceImporter.Function.Interfaces;
 
 public interface IInputDataValidator
 {
-     void ProcessData(WorkbookPart workbookPart, string sheetName);
-     public string GetCellValue(Cell cell);
+    void ProcessData(WorkbookPart workbookPart, string sheetName);
+    public string GetCellValue(Cell cell);
 }
