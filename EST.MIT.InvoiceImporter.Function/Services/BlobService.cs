@@ -10,78 +10,76 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace EST.MIT.InvoiceImporter.Function.Services
+namespace EST.MIT.InvoiceImporter.Function.Services;
+public class BlobService : IBlobService
 {
-    public class BlobService : IBlobService
+    private string _fileName;
+    private readonly ILogger<BlobService> _logger;
+
+    public BlobService(ILogger<BlobService> logger)
     {
-        private string _fileName;
-        private readonly ILogger<BlobService> _logger;
+        _logger = logger;
+    }
 
-        public BlobService(ILogger<BlobService> logger)
+    public async Task<Stream> ReadBLOBIntoStream(string importMsg, IBinder blobBinder)
+    {
+        Stream blobStream = null;
+        if (importMsg == null)
         {
-            _logger = logger;
+            _logger.LogError("No import request received.");
+            return blobStream;
         }
 
-        public async Task<Stream> ReadBLOBIntoStream(string importMsg, IBinder blobBinder)
+        ImportRequest importRequest;
+        try
         {
-            Stream blobStream = null;
-            if (importMsg == null)
-            {
-                _logger.LogError("No import request received.");
-                return blobStream;
-            }
-
-            ImportRequest importRequest;
-            try
-            {
-                importRequest = JsonConvert.DeserializeObject<ImportRequest>(importMsg);
-            }
-            catch (JsonException ex)
-            {
-                _logger.LogError(ex, "Invalid import request received.");
-                return blobStream;
-            }
-
-            var blobAttr = new BlobAttribute($"invoices/import/{importRequest.FileName}", FileAccess.Read)
-            {
-                Connection = "StorageConnectionString"
-            };
-
-            _fileName = importRequest.FileName;
-            return await blobBinder.BindAsync<Stream>(blobAttr);
+            importRequest = JsonConvert.DeserializeObject<ImportRequest>(importMsg);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogError(ex, "Invalid import request received.");
+            return blobStream;
         }
 
-        [ExcludeFromCodeCoverage]
-        public async Task<bool> MoveFileToArchive(string fileName, BlobServiceClient blobServiceClient)
+        var blobAttr = new BlobAttribute($"invoices/import/{importRequest.FileName}", FileAccess.Read)
         {
-            try
-            {
-                var containerClient = blobServiceClient.GetBlobContainerClient("invoices");
-                var sourceBlobClient = containerClient.GetBlobClient($"import/{fileName}");
-                var destBlobClient = containerClient.GetBlobClient($"archive/{fileName}");
-                CopyFromUriOperation copyOperation = await destBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri);
-                await copyOperation.WaitForCompletionAsync();
-                await sourceBlobClient.DeleteIfExistsAsync();
-                _logger.LogInformation($"File {fileName} moved to archive folder.");
-                return true;
-            }
-            catch (RequestFailedException ex)
-            {
-                _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
-                _logger.LogError(ex.ErrorCode);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
-                _logger.LogError(ex.Message);
-                return false;
-            }
-        }
+            Connection = "StorageConnectionString"
+        };
 
-        public virtual string GetFileName()
+        _fileName = importRequest.FileName;
+        return await blobBinder.BindAsync<Stream>(blobAttr);
+    }
+
+    [ExcludeFromCodeCoverage]
+    public async Task<bool> MoveFileToArchive(string fileName, BlobServiceClient blobServiceClient)
+    {
+        try
         {
-            return _fileName;
+            var containerClient = blobServiceClient.GetBlobContainerClient("invoices");
+            var sourceBlobClient = containerClient.GetBlobClient($"import/{fileName}");
+            var destBlobClient = containerClient.GetBlobClient($"archive/{fileName}");
+            CopyFromUriOperation copyOperation = await destBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri);
+            await copyOperation.WaitForCompletionAsync();
+            await sourceBlobClient.DeleteIfExistsAsync();
+            _logger.LogInformation($"File {fileName} moved to archive folder.");
+            return true;
         }
+        catch (RequestFailedException ex)
+        {
+            _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+            _logger.LogError(ex.ErrorCode);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+            _logger.LogError(ex.Message);
+            return false;
+        }
+    }
+
+    public virtual string GetFileName()
+    {
+        return _fileName;
     }
 }
