@@ -63,7 +63,7 @@ public class InputDataValidatorTests
             WorkbookPart workbookPart = document.WorkbookPart;
             toTest = new InputDataValidator();
 
-            var exception = Record.Exception(() => toTest.ProcessData(workbookPart, "suggestion AG"));
+            var exception = Record.Exception(() => toTest.ProcessData(workbookPart, "Invoices"));
             Assert.Null(exception);
         }
     }
