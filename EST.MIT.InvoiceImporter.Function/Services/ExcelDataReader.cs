@@ -54,7 +54,7 @@ public class ExcelDataReader : IExcelDataReader
             switch (cell.DataType.Value)
             {
                 case CellValues.SharedString:
-                    return GetSharedStringValue(cell, value);
+                    return GetSharedStringValue(value);
                 case CellValues.Boolean:
                     return GetBooleanValue(value);
                 case CellValues.Date:
@@ -65,7 +65,7 @@ public class ExcelDataReader : IExcelDataReader
         return value;
     }
 
-    private string GetSharedStringValue(Cell cell, string value)
+    private string GetSharedStringValue(string value)
     {
         if (Int32.TryParse(value, out int id))
         {
@@ -82,12 +82,12 @@ public class ExcelDataReader : IExcelDataReader
         return value;
     }
 
-    private string GetBooleanValue(string value)
+    private static string GetBooleanValue(string value)
     {
         return (value == "0") ? "FALSE" : "TRUE";
     }
 
-    private string GetDateValue(string value)
+    private static string GetDateValue(string value)
     {
         return DateTime.FromOADate(double.Parse(value)).ToShortDateString();
     }
