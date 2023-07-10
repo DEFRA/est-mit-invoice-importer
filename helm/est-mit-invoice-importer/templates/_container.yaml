@@ -1,4 +1,4 @@
-{{- define "est-mit-web.container" -}}
+{{- define "est-mit-invoice-importer.container" -}}
 ports:
 - containerPort: {{ .Values.container.port }}
 volumeMounts:
