@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  est-mit-web:
+    build:
+      context: .
+      target: production
+    image: est-mit-invoice-importer
+    container_name: est-mit-invoice-importer
+    environment:
+      COMPlus_EnableDiagnostics: 0
