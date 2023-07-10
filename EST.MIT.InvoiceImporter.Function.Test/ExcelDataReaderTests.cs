@@ -1,16 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
-using FluentAssertions;
 using DocumentFormat.OpenXml.Spreadsheet;
 using EST.MIT.InvoiceImporter.Function.Services;
-using DocumentFormat.OpenXml.Packaging;
 using EST.MIT.InvoiceImporter.Function.Test.Helpers;
-using EST.MIT.InvoiceImporter.Function.Models;
-using Moq;
-using Microsoft.Extensions.Logging;
 
 namespace EST.MIT.InvoiceImporter.Function.Test;
 
@@ -174,17 +164,6 @@ public class ExcelDataReaderTests
     public void GetCell_ReturnsMatchingCell()
     {
         string cellReference = "A1";
-
-        var result = reader.GetCell(cellReference);
-
-        Assert.NotNull(result);
-    }
-
-    [Fact]
-    public void GetCell_ReturnsEmptyCell_OnTimeout()
-    {
-        string cellReference = "A1";
-        TimeSpan timeout = TimeSpan.FromSeconds(61);
 
         var result = reader.GetCell(cellReference);
 

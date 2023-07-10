@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml;
-using System.Linq;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 
 namespace EST.MIT.InvoiceImporter.Function.Services;

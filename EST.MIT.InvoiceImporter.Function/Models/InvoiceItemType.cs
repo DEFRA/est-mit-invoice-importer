@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 namespace EST.MIT.InvoiceImporter.Function.Models;
 
-
 [ExcludeFromCodeCoverage]
 public static class InvoiceItemType
 {

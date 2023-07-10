@@ -8,8 +8,6 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EST.MIT.InvoiceImporter.Function.Services;
 
@@ -17,7 +15,7 @@ public class ExcelDataReader : IExcelDataReader
 {
     private readonly WorkbookPart workbookPart;
     private readonly WorksheetPart worksheetPart;
-    private readonly int timeoutInSeconds = 60;
+    private static readonly int timeoutInSeconds = 60;
 
     [ExcludeFromCodeCoverage]
     public ExcelDataReader(string filePath, string sheetName)
@@ -56,26 +54,18 @@ public class ExcelDataReader : IExcelDataReader
             switch (cell.DataType.Value)
             {
                 case CellValues.SharedString:
-                    value = GetSharedStringValue(cell, value);
-                    break;
-
+                    return GetSharedStringValue(cell, value);
                 case CellValues.Boolean:
-                    value = GetBooleanValue(value);
-                    break;
-
+                    return GetBooleanValue(value);
                 case CellValues.Date:
-                    value = GetDateValue(value);
-                    break;
-
-                default:
-                    break;
+                    return GetDateValue(value);
             }
         }
 
         return value;
     }
 
-    public string GetSharedStringValue(Cell cell, string value)
+    private string GetSharedStringValue(Cell cell, string value)
     {
         if (Int32.TryParse(value, out int id))
         {
@@ -92,12 +82,12 @@ public class ExcelDataReader : IExcelDataReader
         return value;
     }
 
-    public string GetBooleanValue(string value)
+    private string GetBooleanValue(string value)
     {
         return (value == "0") ? "FALSE" : "TRUE";
     }
 
-    public string GetDateValue(string value)
+    private string GetDateValue(string value)
     {
         return DateTime.FromOADate(double.Parse(value)).ToShortDateString();
     }
@@ -107,25 +97,17 @@ public class ExcelDataReader : IExcelDataReader
         string columnName = string.Empty;
         uint rowIndex = 0;
 
-
         if (TryParseCellReference(cellReference, out columnName, out rowIndex))
         {
             Task<Row> rowTask = GetRowByIndexAsync(rowIndex);
-            if (rowTask.Wait(timeoutInSeconds))
+            Row row = rowTask.Result;
+            if (row != null)
             {
-                Row row = rowTask.Result;
-                if (row != null)
+                Cell matchingCell = row.Elements<Cell>().FirstOrDefault(c => string.Equals(GetColumnName(c.CellReference), columnName, StringComparison.OrdinalIgnoreCase));
+                if (matchingCell != null)
                 {
-                    Cell matchingCell = row.Elements<Cell>().FirstOrDefault(c => string.Equals(GetColumnName(c.CellReference), columnName, StringComparison.OrdinalIgnoreCase));
-                    if (matchingCell != null)
-                    {
-                        return matchingCell;
-                    }
+                    return matchingCell;
                 }
-            }
-            else
-            {
-                Console.WriteLine("GetCell Operation Timeout");
             }
         }
 
@@ -140,7 +122,7 @@ public class ExcelDataReader : IExcelDataReader
         });
     }
 
-    private bool TryParseCellReference(string cellReference, out string columnName, out uint rowIndex)
+    private static bool TryParseCellReference(string cellReference, out string columnName, out uint rowIndex)
     {
         columnName = string.Empty;
         rowIndex = 0;
@@ -152,8 +134,9 @@ public class ExcelDataReader : IExcelDataReader
 
             Task task = Task.Run(() =>
             {
-                parsedColumnName = Regex.Replace(cellReference, @"\d", string.Empty);
-                parsedRowIndex = uint.Parse(Regex.Replace(cellReference, "[^0-9]", string.Empty));
+                var timeout = TimeSpan.FromSeconds(timeoutInSeconds);
+                parsedColumnName = Regex.Replace(cellReference, @"\d", string.Empty, RegexOptions.None, timeout);
+                parsedRowIndex = uint.Parse(Regex.Replace(cellReference, "[^0-9]", string.Empty, RegexOptions.None, timeout));
             });
 
             task.Wait();
@@ -169,8 +152,6 @@ public class ExcelDataReader : IExcelDataReader
         }
     }
 
-
-
     public string GetColumnName(string cellReference)
     {
         if (string.IsNullOrEmpty(cellReference))
@@ -178,7 +159,8 @@ public class ExcelDataReader : IExcelDataReader
             return null;
         }
 
-        var match = Regex.Match(cellReference, @"([A-Za-z]+)");
+        var timeout = TimeSpan.FromSeconds(timeoutInSeconds);
+        var match = Regex.Match(cellReference, @"([A-Za-z]+)", RegexOptions.None, timeout);
         return match.Success ? match.Value : null;
     }
 

@@ -1,12 +1,5 @@
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Xunit;
-using Newtonsoft.Json;
-using Xunit.Abstractions;
 using EST.MIT.InvoiceImporter.Function.Services;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace EST.MIT.InvoiceImporter.Function.Test;
 
@@ -27,8 +20,6 @@ public class ExcelDataReaderIntegrationTests
     [Fact]
     public void ReadExcelData_ValidFile_ReturnsCorrectData()
     {
-        // var worksheetPart = reader.GetWorksheet();
-
         var actualInvoice = reader.GetExcelData();
 
         Assert.NotNull(actualInvoice);
@@ -37,6 +28,5 @@ public class ExcelDataReaderIntegrationTests
         Assert.Equal("RDT", actualInvoice.Organisation);
         Assert.Equal("CP", actualInvoice.SchemeType);
         Assert.Equal("First Payment", actualInvoice.AccountType);
-
     }
 }
