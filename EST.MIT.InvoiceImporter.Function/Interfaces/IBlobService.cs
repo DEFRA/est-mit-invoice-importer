@@ -3,7 +3,7 @@ using Microsoft.Azure.WebJobs;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace EST.MIT.InvoiceImporter.Function.Services;
+namespace EST.MIT.InvoiceImporter.Function.Interfaces;
 public interface IBlobService
 {
     Task<Stream> ReadBLOBIntoStream(string importMsg, IBinder blobBinder);

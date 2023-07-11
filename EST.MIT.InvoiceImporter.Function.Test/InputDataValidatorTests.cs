@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml;
-using System.Linq;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Services;
 
@@ -63,7 +58,7 @@ public class InputDataValidatorTests
             WorkbookPart workbookPart = document.WorkbookPart;
             toTest = new InputDataValidator();
 
-            var exception = Record.Exception(() => toTest.ProcessData(workbookPart, "suggestion AG"));
+            var exception = Record.Exception(() => toTest.ProcessData(workbookPart, "Invoices"));
             Assert.Null(exception);
         }
     }
