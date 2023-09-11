@@ -24,7 +24,7 @@ ARG PORT=3000
 ENV PORT ${PORT}
 EXPOSE ${PORT}
 
-CMD dotnet watch --project ./EST.MIT.InvoiceImporter.Function run --urls "http://*:${PORT}"
+CMD cd ./EST.MIT.InvoiceImporter.Function && func start --port ${PORT}
 
 # Production
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production
