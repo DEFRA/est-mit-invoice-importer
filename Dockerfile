@@ -7,7 +7,7 @@ ARG PARENT_VERSION
 
 LABEL uk.gov.defra.parent-image=defra-dotnetcore-development:${PARENT_VERSION}
 
-RUN mkdir -p /home/dotnet/EST.MIT.InvoiceImporter.Function/ /home/dotnet/EST.MIT.InvoiceImporter.Function.Test/ 
+RUN mkdir -p /home/dotnet/EST.MIT.InvoiceImporter.Function/ /home/dotnet/EST.MIT.InvoiceImporter.Function.Test/
 
 COPY --chown=dotnet:dotnet ./EST.MIT.InvoiceImporter.Function/*.csproj ./EST.MIT.InvoiceImporter.Function/
 RUN dotnet restore ./EST.MIT.InvoiceImporter.Function/EST.MIT.InvoiceImporter.Function.csproj
@@ -24,7 +24,7 @@ ARG PORT=3000
 ENV PORT ${PORT}
 EXPOSE ${PORT}
 
-CMD dotnet watch --project /home/dotnet/EST.MIT.InvoiceImporter.Function/ run --urls "http://*:${PORT}"
+CMD dotnet watch --project ./EST.MIT.InvoiceImporter.Function run --urls "http://*:${PORT}"
 
 # Production
 FROM defradigital/dotnetcore:$PARENT_VERSION AS production

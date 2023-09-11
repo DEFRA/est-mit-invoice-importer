@@ -8,4 +8,4 @@ services:
       - "3000:3000"
     volumes:
       - ./EST.MIT.InvoiceImporter:/home/dotnet/EST.MIT.InvoiceImporter
-      - ./EST.MIT.InvoiceImporter.Test:/home/dotnet/EST.MIT.InvoiceImporter.Test
+      - ./EST.MIT.InvoiceImporter.Function.Test:/home/dotnet/EST.MIT.InvoiceImporter.Function.Test
