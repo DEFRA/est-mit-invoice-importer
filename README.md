@@ -32,3 +32,4 @@ To run the function:
 ## Useful links
 
 - [Use dependency injection in .NET Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection)
+edit
