@@ -225,21 +225,152 @@ public class ExcelDataReader : IExcelDataReader
         return line;
     }
 
-    public ExcelInvoice GetExcelData()
+    public List<ExcelInvoice> GetExcelData()
     {
         int rowNumber = 4;
+        var invoices = new List<ExcelInvoice>();
+        int maxRowNumber = GetLastPopulatedRowNumber();
+        ExcelInvoice currentInvoice = null;
+        ExcelHeader currentHeader = null;
 
-        var invoice = GetExcelInvoice(rowNumber);
+        while (rowNumber <= maxRowNumber)
+        {
+            var invoiceDataExists = CheckInvoiceExistsOnRow(rowNumber);
+            var headerDataExists = CheckHeaderExistsOnRow(rowNumber);
+            var lineDataExists = CheckLineExistsOnRow(rowNumber);
 
-        invoice.Headers = new List<ExcelHeader>();
-        var header = GetExcelHeader(rowNumber);
+            if (invoiceDataExists && headerDataExists && lineDataExists)
+            {
+                currentInvoice = GetExcelInvoice(rowNumber);
+                currentInvoice.Headers = new List<ExcelHeader>();
 
-        var line = GetExcelLine(rowNumber);
-        header.Lines = new List<ExcelLine>();
+                currentHeader = GetExcelHeader(rowNumber);
+                currentHeader.Lines = new List<ExcelLine>();
 
-        header.Lines.Add(line);
-        invoice.Headers.Add(header);
+                var line = GetExcelLine(rowNumber);
+                currentHeader.Lines.Add(line);
 
-        return invoice;
+                currentInvoice.Headers.Add(currentHeader);
+            }
+            else if (currentInvoice != null && !invoiceDataExists && headerDataExists && lineDataExists)
+            {
+                currentHeader = GetExcelHeader(rowNumber);
+                currentHeader.Lines = new List<ExcelLine>();
+
+                var line = GetExcelLine(rowNumber);
+                currentHeader.Lines.Add(line);
+
+                currentInvoice.Headers.Add(currentHeader);
+            }
+            else if (currentInvoice != null && currentHeader != null && !invoiceDataExists && !headerDataExists && lineDataExists)
+            {
+                var line = GetExcelLine(rowNumber);
+                currentHeader.Lines.Add(line);
+            }
+
+            if (rowNumber == maxRowNumber && currentInvoice != null)
+            {
+                invoices.Add(currentInvoice);
+            }
+
+            rowNumber++;
+        }
+
+        return invoices;
+    }
+
+    public int GetLastPopulatedRowNumber()
+    {
+        return Convert.ToInt32(worksheetPart.Worksheet.Elements<SheetData>().First().Elements<Row>().LastOrDefault()?.RowIndex?.Value ?? 0);
+    }
+
+    public int GetLastRowWithValueInColumnA()
+    {
+        int lastPopulatedRowNumber = GetLastPopulatedRowNumber();
+
+        for (int rowNumber = lastPopulatedRowNumber; rowNumber >= 1; rowNumber--)
+        {
+            string cellValue = GetCellValue(GetCell($"A{rowNumber}"));
+
+            if (!string.IsNullOrEmpty(cellValue))
+            {
+                return rowNumber;
+            }
+        }
+
+        return 0;
+    }
+
+    public ExcelRowType DetermineRowType(int rowNumber)
+    {
+        bool invoiceExists = CheckInvoiceExistsOnRow(rowNumber);
+        bool headerExists = CheckHeaderExistsOnRow(rowNumber);
+        bool lineExists = CheckLineExistsOnRow(rowNumber);
+
+        if (invoiceExists && headerExists && lineExists)
+        {
+            return ExcelRowType.InvoiceHeaderLine;
+        }
+        else if (headerExists && lineExists)
+        {
+            return ExcelRowType.HeaderLine;
+        }
+        else if (lineExists)
+        {
+            return ExcelRowType.Line;
+        }
+        else
+        {
+            return ExcelRowType.Undefined;
+        }
+    }
+
+    public bool CheckInvoiceExistsOnRow(int rowNumber)
+    {
+        string colAValue = GetCellValue(GetCell($"A{rowNumber}"));
+        string colBValue = GetCellValue(GetCell($"B{rowNumber}"));
+        string colCValue = GetCellValue(GetCell($"C{rowNumber}"));
+        string colDValue = GetCellValue(GetCell($"D{rowNumber}"));
+        string colEValue = GetCellValue(GetCell($"E{rowNumber}"));
+
+        return !string.IsNullOrEmpty(colAValue) &&
+               !string.IsNullOrEmpty(colBValue) &&
+               !string.IsNullOrEmpty(colCValue) &&
+               !string.IsNullOrEmpty(colDValue) &&
+               !string.IsNullOrEmpty(colEValue);
+    }
+
+    public bool CheckHeaderExistsOnRow(int rowNumber)
+    {
+        string colFValue = GetCellValue(GetCell($"F{rowNumber}"));
+        string colHValue = GetCellValue(GetCell($"H{rowNumber}"));
+        string colKValue = GetCellValue(GetCell($"K{rowNumber}"));
+        string colLValue = GetCellValue(GetCell($"L{rowNumber}"));
+        string colOValue = GetCellValue(GetCell($"O{rowNumber}"));
+
+        return !string.IsNullOrEmpty(colFValue) &&
+               !string.IsNullOrEmpty(colHValue) &&
+               !string.IsNullOrEmpty(colKValue) &&
+               !string.IsNullOrEmpty(colLValue) &&
+               !string.IsNullOrEmpty(colOValue);
+    }
+
+    public bool CheckLineExistsOnRow(int rowNumber)
+    {
+        string colQValue = GetCellValue(GetCell($"Q{rowNumber}"));
+        string colRValue = GetCellValue(GetCell($"R{rowNumber}"));
+        string colSValue = GetCellValue(GetCell($"S{rowNumber}"));
+        string colTValue = GetCellValue(GetCell($"T{rowNumber}"));
+        string colUValue = GetCellValue(GetCell($"U{rowNumber}"));
+        string colVValue = GetCellValue(GetCell($"V{rowNumber}"));
+        string colWValue = GetCellValue(GetCell($"W{rowNumber}"));
+
+        return !string.IsNullOrEmpty(colQValue) &&
+               !string.IsNullOrEmpty(colRValue) &&
+               !string.IsNullOrEmpty(colSValue) &&
+               !string.IsNullOrEmpty(colTValue) &&
+               !string.IsNullOrEmpty(colUValue) &&
+               !string.IsNullOrEmpty(colVValue) &&
+               !string.IsNullOrEmpty(colWValue);
     }
 }

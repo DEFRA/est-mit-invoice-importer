@@ -20,7 +20,11 @@ public class ExcelDataReaderIntegrationTests
     [Fact]
     public void ReadExcelData_ValidFile_ReturnsCorrectData()
     {
-        var actualInvoice = reader.GetExcelData();
+        var actualInvoices = reader.GetExcelData();
+
+        Assert.Single(actualInvoices);
+
+        var actualInvoice = actualInvoices.First();
 
         Assert.NotNull(actualInvoice);
         Assert.Equal("InternalID_123", actualInvoice.Id);

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DocumentFormat.OpenXml.Spreadsheet;
 using EST.MIT.InvoiceImporter.Function.Models;
 
@@ -12,5 +13,12 @@ public interface IExcelDataReader
     ExcelInvoice GetExcelInvoice(int rowNumber);
     ExcelHeader GetExcelHeader(int rowNumber);
     ExcelLine GetExcelLine(int rowNumber);
-    ExcelInvoice GetExcelData();
+    List<ExcelInvoice> GetExcelData();
+    int GetLastPopulatedRowNumber();
+    int GetLastRowWithValueInColumnA();
+    ExcelRowType DetermineRowType(int rowNumber);
+
+    bool CheckInvoiceExistsOnRow(int rowNumber);
+    bool CheckHeaderExistsOnRow(int rowNumber);
+    bool CheckLineExistsOnRow(int rowNumber);
 }
