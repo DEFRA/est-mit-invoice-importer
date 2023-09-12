@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using EST.MIT.Importer.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
-using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace EST.MIT.Importer.Function.Services;
+namespace EST.MIT.InvoiceImporter.Function.Services;
 public class Importer : IImporter
 {
     private readonly IBlobService _blobService;
@@ -30,8 +29,6 @@ public class Importer : IImporter
         IBinder blobBinder,
         ILogger log)
     {
-        //event queue test
-        await _eventQueueService.CreateMessage("ID1235456", "received", "create", "receieved", null);
         log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
         using (await _blobService.ReadBLOBIntoStream(importMessage, blobBinder))
         {
