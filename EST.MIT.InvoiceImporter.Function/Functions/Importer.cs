@@ -14,11 +14,13 @@ public class Importer : IImporter
     private readonly IBlobService _blobService;
     private readonly IConfiguration _configuration;
     private readonly BlobServiceClient _blobServiceClient;
+    private readonly IEventQueueService _eventQueueService;
 
-    public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService)
+    public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService, IEventQueueService eventQueueService)
     {
         _blobService = blobService;
         _configuration = configuration;
+        _eventQueueService = eventQueueService;
         _blobServiceClient = azureBlobService.BlobServiceClient ?? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
     }
 
@@ -28,6 +30,8 @@ public class Importer : IImporter
         IBinder blobBinder,
         ILogger log)
     {
+        //event queue test
+        await _eventQueueService.CreateMessage("ID1235456", "received", "create", "receieved", null);
         log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
         using (await _blobService.ReadBLOBIntoStream(importMessage, blobBinder))
         {
