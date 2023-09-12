@@ -30,11 +30,12 @@ public class ImporterTests
 
         var mockBlobServiceClient = new Mock<BlobServiceClient>();
         var mockAzureBlobService = new Mock<IAzureBlobService>();
+        var mockEventQueueService = new Mock<EventQueueService>();
         mockAzureBlobService.Setup(x => x.BlobServiceClient).Returns(mockBlobServiceClient.Object);
 
         var mockBlobService = new Mock<IBlobService>();
 
-        _importer = new Importer(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object);
+        _importer = new Importer(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object, mockEventQueueService.Object);
     }
 
     [Fact]

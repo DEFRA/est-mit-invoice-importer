@@ -15,7 +15,7 @@ public class AzureBlobService : IAzureBlobService
     public AzureBlobService(IConfiguration configuration)
     {
         _configuration = configuration;
-        //_blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
+        _blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
         BlobServiceClient = _blobServiceClient;
     }
 
