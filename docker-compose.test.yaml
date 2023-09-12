@@ -8,4 +8,6 @@ services:
     container_name: est-mit-invoice-importer-test
     entrypoint: dotnet test ./EST.MIT.InvoiceImporter.Function.Test/EST.MIT.InvoiceImporter.Function.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./test-output/'
     volumes:
+      - ./EST.MIT.InvoiceImporter.Function:/home/dotnet/EST.MIT.InvoiceImporter.Function
+      - ./EST.MIT.InvoiceImporter.Function:/home/dotnet/EST.MIT.InvoiceImporter.Function.Test
       - ./test-output:/home/dotnet/EST.MIT.InvoiceImporter.Function.Test/test-output
