@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using EST.MIT.Importer.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
-using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace EST.MIT.Importer.Function.Services;
+namespace EST.MIT.InvoiceImporter.Function.Services;
 public class Importer : IImporter
 {
     private readonly IBlobService _blobService;

@@ -1,5 +1,4 @@
 using EST.MIT.Importer.Function.Interfaces;
-using EST.MIT.Importer.Function.Services;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
