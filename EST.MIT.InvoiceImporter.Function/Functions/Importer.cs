@@ -13,11 +13,13 @@ public class Importer : IImporter
     private readonly IBlobService _blobService;
     private readonly IConfiguration _configuration;
     private readonly BlobServiceClient _blobServiceClient;
+    private readonly IEventQueueService _eventQueueService;
 
-    public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService)
+    public Importer(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService, IEventQueueService eventQueueService)
     {
         _blobService = blobService;
         _configuration = configuration;
+        _eventQueueService = eventQueueService;
         _blobServiceClient = azureBlobService.BlobServiceClient ?? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
     }
 
