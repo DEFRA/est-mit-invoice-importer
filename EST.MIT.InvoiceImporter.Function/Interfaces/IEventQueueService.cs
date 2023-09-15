@@ -1,4 +1,4 @@
-﻿using InvoiceImporter.Function.Models;
+﻿using EST.MIT.InvoiceImporter.Function.Models;
 using System.Threading.Tasks;
 
 namespace EST.MIT.InvoiceImporter.Function.Interfaces;

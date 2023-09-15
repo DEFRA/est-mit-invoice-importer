@@ -1,9 +1,6 @@
 using DocumentFormat.OpenXml.Spreadsheet;
-using EST.MIT.InvoiceImporter.Function.Interfaces;
-using EST.MIT.InvoiceImporter.Function.Models;
 using EST.MIT.InvoiceImporter.Function.Services;
 using EST.MIT.InvoiceImporter.Function.Test.Helpers;
-using Moq;
 
 namespace EST.MIT.InvoiceImporter.Function.Test;
 

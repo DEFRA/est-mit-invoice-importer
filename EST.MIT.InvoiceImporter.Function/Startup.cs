@@ -22,13 +22,14 @@ public class Startup : FunctionsStartup
 
         Console.WriteLine("Configuring services...");
 
-        builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
+        builder.Services.AddSingleton<IAzureTableService, AzureTableService>();
 
         builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
 
         builder.Services.AddSingleton<IImporter, Importer>();
 
         builder.Services.AddSingleton<IBlobService, BlobService>();
+        builder.Services.AddSingleton<IEventQueueService, EventQueueService>();
 
         var storageConnection = Configuration["Storage:ConnectionString"];
         var eventQueueName = Configuration["Storage:EventQueueName"];
