@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Queues;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
-using InvoiceImporter.Function.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Text;

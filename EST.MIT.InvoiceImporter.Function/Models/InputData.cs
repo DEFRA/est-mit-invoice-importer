@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace InvoiceImporter.Function.Models;
+namespace EST.MIT.InvoiceImporter.Function.Models;
 
 public class InputData
 {

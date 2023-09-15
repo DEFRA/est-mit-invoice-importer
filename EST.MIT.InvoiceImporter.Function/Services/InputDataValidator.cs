@@ -8,7 +8,6 @@ namespace EST.MIT.InvoiceImporter.Function.Services;
 
 public class InputDataValidator : IInputDataValidator
 {
-
     public void ProcessData(WorkbookPart workbookPart, string sheetName)
     {
         Sheet theSheet = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == sheetName).FirstOrDefault();
@@ -40,7 +39,4 @@ public class InputDataValidator : IInputDataValidator
 
         return cell.CellValue.InnerXml;
     }
-
-
-
 }

@@ -1,7 +1,8 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using InvoiceImporter.Function.Models;
+using EST.MIT.InvoiceImporter.Function.Interfaces;
+using EST.MIT.InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -9,7 +10,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using EST.MIT.InvoiceImporter.Function.Interfaces;
 
 namespace EST.MIT.InvoiceImporter.Function.Services;
 public class BlobService : IBlobService
