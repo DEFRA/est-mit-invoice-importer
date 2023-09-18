@@ -25,7 +25,7 @@ public class EventQueueService : IEventQueueService
         _logger = logger;
     }
 
-    public async Task CreateMessage(string id, string status, string action, string message, Invoice? invoice = null)
+    public async Task CreateMessage(string id, string status, string action, string message, PaymentRequestsBatch? paymentRequestsBatch = null)
     {
         var eventRequest = new Event()
         {
@@ -40,7 +40,7 @@ public class EventQueueService : IEventQueueService
                     Type = action,
                     Message = message,
                     Timestamp = DateTime.UtcNow,
-                    Data = JsonSerializer.Serialize(invoice)
+                    Data = JsonSerializer.Serialize(paymentRequestsBatch)
                 }
             }
         };

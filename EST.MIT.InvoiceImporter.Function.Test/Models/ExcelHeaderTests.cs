@@ -13,7 +13,7 @@ public class ExcelHeaderTests
             AgreementNumber = "TestAgreementNumber",
             ClaimRef = "TestClaimRef",
             FRN = "107377217",
-            PaymentRequestNumber = "0",
+            PaymentRequestNumber = "1",
             ContractNumber = "TestContractNumber",
             Value = "2613.69",
             DeliveryBody = "TestDeliveryBody",
@@ -26,7 +26,7 @@ public class ExcelHeaderTests
         Assert.Equal("TestAgreementNumber", excelHeader.AgreementNumber);
         Assert.Equal("TestClaimRef", excelHeader.ClaimRef);
         Assert.Equal("107377217", excelHeader.FRN);
-        Assert.Equal("0", excelHeader.PaymentRequestNumber);
+        Assert.Equal("1", excelHeader.PaymentRequestNumber);
         Assert.Equal("TestContractNumber", excelHeader.ContractNumber);
         Assert.Equal("2613.69", excelHeader.Value);
         Assert.Equal("TestDeliveryBody", excelHeader.DeliveryBody);

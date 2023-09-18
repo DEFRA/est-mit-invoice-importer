@@ -36,7 +36,7 @@ public class ImporterTests
         var mockEventQueueService = new Mock<IEventQueueService>();
 
         mockEventQueueService
-            .Setup(x => x.CreateMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Invoice?>()))
+            .Setup(x => x.CreateMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<PaymentRequestsBatch?>()))
             .Returns(Task.CompletedTask);
 
         var mockAzureTableService = new Mock<IAzureTableService>();
