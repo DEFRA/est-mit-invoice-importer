@@ -11,6 +11,5 @@ public class ImportRequestMapper : Profile
     public ImportRequestMapper()
     {
         CreateMap<ImportRequestEntity, ImportRequest>();
-
     }
 }
