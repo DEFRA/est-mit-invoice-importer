@@ -4,6 +4,8 @@ using Azure.Data.Tables;
 using EST.MIT.InvoiceImporter.Function.Services;
 using EST.MIT.InvoiceImporter.Function.TableEntities;
 using Azure;
+using AutoMapper;
+using EST.MIT.InvoiceImporter.Function.AutoMapperProfiles;
 
 namespace EST.MIT.InvoiceImporter.Function.Test.Services;
 
@@ -15,7 +17,13 @@ public class AzureTableServiceTests
 
     public AzureTableServiceTests()
     {
-        _datasetService = new AzureTableService(_tableClient.Object);
+        var mapperConfig = new MapperConfiguration(mc =>
+      {
+          mc.AddProfile(new ImportRequestMapper());
+      });
+        IMapper mapper = mapperConfig.CreateMapper();
+
+        _datasetService = new AzureTableService(_tableClient.Object, mapper);
     }
 
     [Fact]
@@ -53,7 +61,8 @@ public class AzureTableServiceTests
                 RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:47:55.5134136+01:00",
                 FileName = "test.xlsx",
                 InvoiceType = "AR",
-                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:00.0000000+00:00")
+                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:00.0000000+00:00"),
+                CreatedBy = "test@example.com"
             },
             new ImportRequestEntity
             {
@@ -61,7 +70,8 @@ public class AzureTableServiceTests
                 RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:48:55.5134136+01:00",
                 FileName = "test2.xlsx",
                 InvoiceType = "AP",
-                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00")
+                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
+                CreatedBy = "test@example.com"
             }
         }, null, Mock.Of<Response>());
 
@@ -74,6 +84,56 @@ public class AzureTableServiceTests
         var list = result.ToList();
 
         Assert.Equal("test2.xlsx", list[0].FileName);
+        Assert.Equal("AP", list[0].InvoiceType);
+
+        Assert.Equal("test.xlsx", list[1].FileName);
+        Assert.Equal("AR", list[1].InvoiceType);
+    }
+
+    [Fact]
+    public async Task GetUserDatasetsShouldReturnMostRecentEntityInEachPartition()
+    {
+        var page = Page<ImportRequestEntity>.FromValues(new[]
+        {
+            new ImportRequestEntity
+            {
+                PartitionKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228",
+                RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:47:55.5134136+01:00",
+                FileName = "test.xlsx",
+                InvoiceType = "AR",
+                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:00.0000000+00:00"),
+                CreatedBy = "test@example.com"
+            },
+            new ImportRequestEntity
+            {
+                PartitionKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228",
+                RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:48:55.5134136+01:00",
+                FileName = "test1.xlsx",
+                InvoiceType = "AP",
+                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
+                CreatedBy = "test@example.com"
+            },
+            new ImportRequestEntity
+            {
+                PartitionKey = "77c91e93-6dd6-4644-af64-7da6f27677f9",
+                RowKey = "56066040-be37-402a-a9f8-9483910e84ec_2023-03-29T16:48:55.5134136+01:00",
+                FileName = "test2.xlsx",
+                InvoiceType = "AP",
+                Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
+                CreatedBy = "test2@example.com"
+            }
+        }, null, Mock.Of<Response>());
+
+        var pageable = Pageable<ImportRequestEntity>.FromPages(new[] { page });
+
+        _tableClient.Setup(x => x.Query<ImportRequestEntity>(It.IsAny<string>(), null, null, CancellationToken.None)).Returns(pageable);
+
+        var result = await _datasetService.GetUserImportRequestsAsync("test@example.com");
+
+        var list = result.ToList();
+        Assert.Equal(2, result.Count());
+
+        Assert.Equal("test1.xlsx", list[0].FileName);
         Assert.Equal("AP", list[0].InvoiceType);
 
         Assert.Equal("test.xlsx", list[1].FileName);

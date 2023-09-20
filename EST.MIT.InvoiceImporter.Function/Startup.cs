@@ -1,4 +1,6 @@
+using AutoMapper;
 using EST.MIT.Importer.Function.Interfaces;
+using EST.MIT.InvoiceImporter.Function.AutoMapperProfiles;
 using EST.MIT.InvoiceImporter.Function.Configuration;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Services;
@@ -30,6 +32,11 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IBlobService, BlobService>();
         builder.Services.AddSingleton<IEventQueueService, EventQueueService>();
+
+        var mapperConfig = new MapperConfiguration(mc =>
+        {
+            mc.AddProfile(new ImportRequestMapper());
+        });
 
         var storageConnection = Configuration["Storage:ConnectionString"];
         var eventQueueName = Configuration["Storage:EventQueueName"];

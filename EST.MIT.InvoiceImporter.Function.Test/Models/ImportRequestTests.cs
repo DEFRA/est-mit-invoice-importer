@@ -16,7 +16,8 @@ public class ImportRequestTests
             InvoiceType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
-            AccountType = "First Payment"
+            AccountType = "First Payment",
+            CreatedBy = "test@example.com"
         };
 
         Assert.Equal("test.xlsx", importRequest.FileName);
@@ -27,5 +28,6 @@ public class ImportRequestTests
         Assert.Equal("RDT", importRequest.Organisation);
         Assert.Equal("CP", importRequest.SchemeType);
         Assert.Equal("First Payment", importRequest.AccountType);
+        Assert.Equal("test@example.com", importRequest.CreatedBy);
     }
 }

@@ -17,7 +17,8 @@ public class ImportRequestEntityTests
             InvoiceType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
-            AccountType = "First Payment"
+            AccountType = "First Payment",
+            CreatedBy = "test@example.com"
         };
 
         var importRequestEntity = new ImportRequestEntity(request);
@@ -30,5 +31,6 @@ public class ImportRequestEntityTests
         Assert.Equal("RDT", importRequestEntity.Organisation);
         Assert.Equal("CP", importRequestEntity.SchemeType);
         Assert.Equal("First Payment", importRequestEntity.AccountType);
+        Assert.Equal("test@example.com", importRequestEntity.CreatedBy);
     }
 }
