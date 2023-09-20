@@ -17,6 +17,7 @@ public class ImportRequestEntity : ITableEntity
     public string Organisation { get; set; }
     public string SchemeType { get; set; }
     public string AccountType { get; set; }
+    public string CreatedBy { get; init; }
 
     public ETag ETag { get; set; }
 
@@ -34,6 +35,7 @@ public class ImportRequestEntity : ITableEntity
         Organisation = importRequest.Organisation;
         SchemeType = importRequest.SchemeType;
         AccountType = importRequest.AccountType;
+        CreatedBy = importRequest.CreatedBy;
 
         PartitionKey = Guid.NewGuid().ToString();
         RowKey = $"{PartitionKey}_{Timestamp:O}";
