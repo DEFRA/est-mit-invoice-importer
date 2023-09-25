@@ -2,6 +2,7 @@ using AutoMapper;
 using EST.MIT.Importer.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.AutoMapperProfiles;
 using EST.MIT.InvoiceImporter.Function.Configuration;
+using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Services;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
 
         builder.Services.AddSingleton<IImporter, Importer>();
+        builder.Services.AddSingleton<IUploadFunctions, UploadFunctions>();
 
         builder.Services.AddSingleton<IBlobService, BlobService>();
         builder.Services.AddSingleton<IEventQueueService, EventQueueService>();

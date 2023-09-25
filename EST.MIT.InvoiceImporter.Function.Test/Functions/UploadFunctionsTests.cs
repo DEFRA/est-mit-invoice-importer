@@ -1,4 +1,5 @@
 using Azure.Storage.Blobs;
+using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
 using EST.MIT.InvoiceImporter.Function.Services;
@@ -6,18 +7,21 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
-namespace InvoiceImporter.Function.Tests;
-public class ImporterTests
+namespace EST.MIT.InvoiceImporter.Function.Test.Functions;
+
+public class UploadFunctionsTests
 {
     private readonly Mock<ILogger> _mockLogger;
     private readonly Mock<IBinder> _mockBinder;
     private readonly IConfiguration _configuration;
-    private readonly Importer _importer;
+    private readonly UploadFunctions _uploadFunctions;
     private readonly Mock<IBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
 
-    public ImporterTests()
+    public UploadFunctionsTests()
     {
         _mockLogger = new Mock<ILogger>();
         _mockBinder = new Mock<IBinder>();
@@ -44,19 +48,37 @@ public class ImporterTests
 
         var mockBlobService = new Mock<IBlobService>();
 
-        _importer = new Importer(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object, mockEventQueueService.Object);
-
+        _uploadFunctions = new UploadFunctions(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object, mockEventQueueService.Object, _mockTableService.Object);
     }
 
     [Fact]
-    public async void QueueTrigger_Valid_Request()
+    public async Task GetUploadsByUser_ReturnsOkObjectResult_WhenCalledWithValidUserId()
     {
-        _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), It.IsAny<IBinder>())).ReturnsAsync(new Mock<Stream>().Object);
-        _mockBlobService.Setup(x => x.GetFileName()).Returns("testfile.csv");
-        _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
+        string userId = "testUser";
+        var importRequests = new List<ImportRequest>
+        {
+            new ImportRequest(),
+            new ImportRequest()
+        };
+        _mockTableService.Setup(s => s.GetUserImportRequestsAsync(userId))
+            .ReturnsAsync(importRequests);
 
-        await _importer.QueueTrigger("some text", _mockBinder.Object, _mockLogger.Object);
+        var result = await _uploadFunctions.GetUploadsByUser(null, userId, _mockLogger.Object);
 
-        _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task GetUploadsByUser_ReturnsInternalServerError_WhenExceptionIsThrown()
+    {
+        string userId = "testUser";
+        _mockTableService.Setup(s => s.GetUserImportRequestsAsync(userId))
+            .ThrowsAsync(new Exception());
+
+        var result = await _uploadFunctions.GetUploadsByUser(null, userId, _mockLogger.Object);
+
+        Assert.IsType<StatusCodeResult>(result);
+        var statusCodeResult = result as StatusCodeResult;
+        Assert.Equal((int)HttpStatusCode.InternalServerError, statusCodeResult.StatusCode);
     }
 }
