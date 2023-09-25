@@ -7,7 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace EST.MIT.InvoiceImporter.Function.Services;
+namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class Importer : IImporter
 {
     private readonly IBlobService _blobService;
