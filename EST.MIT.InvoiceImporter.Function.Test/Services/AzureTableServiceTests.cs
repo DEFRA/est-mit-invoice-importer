@@ -27,7 +27,7 @@ public class AzureTableServiceTests
     }
 
     [Fact]
-    public async Task AddDatasetShouldAddTableEntity()
+    public async Task UpsertImportRequestAsyncAddTableEntity()
     {
         var mockDataset = new ImportRequest
         {
@@ -35,18 +35,48 @@ public class AzureTableServiceTests
             FileSize = 1024,
             FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             Timestamp = DateTimeOffset.Now,
-            InvoiceType = "AR",
+            PaymentType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
             AccountType = "First Payment"
         };
 
-        await _datasetService.AddImportRequestAsync(mockDataset);
+        await _datasetService.UpsertImportRequestAsync(mockDataset);
 
-        _tableClient.Verify(x => x.AddEntityAsync(
+        _tableClient.Verify(x => x.UpsertEntityAsync(
                 It.Is<ImportRequestEntity>(
                     e => e.FileName == "test.xlsx" && e.FileSize == 1024),
-                CancellationToken.None),
+                    TableUpdateMode.Merge,
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task UpsertImportRequestAsyncUpdateTableEntity()
+    {
+        var mockDataset = new ImportRequest
+        {
+            FileName = "test.xlsx",
+            FileSize = 1024,
+            FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Timestamp = DateTimeOffset.Now,
+            PaymentType = "AR",
+            Organisation = "RDT",
+            SchemeType = "CP",
+            AccountType = "First Payment"
+        };
+
+        await _datasetService.UpsertImportRequestAsync(mockDataset);
+
+        mockDataset.FileSize = 2048;
+
+        await _datasetService.UpsertImportRequestAsync(mockDataset);
+
+        _tableClient.Verify(x => x.UpsertEntityAsync(
+                It.Is<ImportRequestEntity>(
+                    e => e.FileName == "test.xlsx" && e.FileSize == 2048),
+                    TableUpdateMode.Merge,
+                It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -60,7 +90,7 @@ public class AzureTableServiceTests
                 PartitionKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228",
                 RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:47:55.5134136+01:00",
                 FileName = "test.xlsx",
-                InvoiceType = "AR",
+                PaymentType = "AR",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:00.0000000+00:00"),
                 CreatedBy = "test@example.com"
             },
@@ -69,7 +99,7 @@ public class AzureTableServiceTests
                 PartitionKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228",
                 RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:48:55.5134136+01:00",
                 FileName = "test2.xlsx",
-                InvoiceType = "AP",
+                PaymentType = "AP",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
                 CreatedBy = "test@example.com"
             }
@@ -84,10 +114,10 @@ public class AzureTableServiceTests
         var list = result.ToList();
 
         Assert.Equal("test2.xlsx", list[0].FileName);
-        Assert.Equal("AP", list[0].InvoiceType);
+        Assert.Equal("AP", list[0].PaymentType);
 
         Assert.Equal("test.xlsx", list[1].FileName);
-        Assert.Equal("AR", list[1].InvoiceType);
+        Assert.Equal("AR", list[1].PaymentType);
     }
 
     [Fact]
@@ -100,7 +130,7 @@ public class AzureTableServiceTests
                 PartitionKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228",
                 RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:47:55.5134136+01:00",
                 FileName = "test.xlsx",
-                InvoiceType = "AR",
+                PaymentType = "AR",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:00.0000000+00:00"),
                 CreatedBy = "test@example.com"
             },
@@ -109,7 +139,7 @@ public class AzureTableServiceTests
                 PartitionKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228",
                 RowKey = "9bb3ce76-c7bc-40ba-9330-d7143663e228_2023-03-29T16:48:55.5134136+01:00",
                 FileName = "test1.xlsx",
-                InvoiceType = "AP",
+                PaymentType = "AP",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
                 CreatedBy = "test@example.com"
             },
@@ -118,7 +148,7 @@ public class AzureTableServiceTests
                 PartitionKey = "77c91e93-6dd6-4644-af64-7da6f27677f9",
                 RowKey = "56066040-be37-402a-a9f8-9483910e84ec_2023-03-29T16:48:55.5134136+01:00",
                 FileName = "test2.xlsx",
-                InvoiceType = "AP",
+                PaymentType = "AP",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
                 CreatedBy = "test2@example.com"
             }
@@ -134,9 +164,9 @@ public class AzureTableServiceTests
         Assert.Equal(2, result.Count());
 
         Assert.Equal("test1.xlsx", list[0].FileName);
-        Assert.Equal("AP", list[0].InvoiceType);
+        Assert.Equal("AP", list[0].PaymentType);
 
         Assert.Equal("test.xlsx", list[1].FileName);
-        Assert.Equal("AR", list[1].InvoiceType);
+        Assert.Equal("AR", list[1].PaymentType);
     }
 }

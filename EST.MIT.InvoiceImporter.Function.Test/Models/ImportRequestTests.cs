@@ -13,21 +13,23 @@ public class ImportRequestTests
             FileSize = 1024,
             FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             Timestamp = DateTimeOffset.Now,
-            InvoiceType = "AR",
+            PaymentType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
             AccountType = "First Payment",
-            CreatedBy = "test@example.com"
+            CreatedBy = "test@example.com",
+            Status = UploadStatus.Uploaded
         };
 
         Assert.Equal("test.xlsx", importRequest.FileName);
         Assert.Equal(1024, importRequest.FileSize);
         Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", importRequest.FileType);
         Assert.NotNull(importRequest.Timestamp);
-        Assert.Equal("AR", importRequest.InvoiceType);
+        Assert.Equal("AR", importRequest.PaymentType);
         Assert.Equal("RDT", importRequest.Organisation);
         Assert.Equal("CP", importRequest.SchemeType);
         Assert.Equal("First Payment", importRequest.AccountType);
         Assert.Equal("test@example.com", importRequest.CreatedBy);
+        Assert.Equal(UploadStatus.Uploaded, importRequest.Status);
     }
 }

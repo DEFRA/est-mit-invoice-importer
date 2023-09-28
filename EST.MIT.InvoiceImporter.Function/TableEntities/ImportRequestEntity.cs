@@ -13,11 +13,12 @@ public class ImportRequestEntity : ITableEntity
     public int FileSize { get; set; }
     public string FileType { get; set; }
     public DateTimeOffset? Timestamp { get; set; } = DateTimeOffset.Now;
-    public string InvoiceType { get; set; }
+    public string PaymentType { get; set; }
     public string Organisation { get; set; }
     public string SchemeType { get; set; }
     public string AccountType { get; set; }
     public string CreatedBy { get; init; }
+    public UploadStatus Status { get; init; }
 
     public ETag ETag { get; set; }
 
@@ -31,11 +32,12 @@ public class ImportRequestEntity : ITableEntity
         FileSize = importRequest.FileSize;
         FileType = importRequest.FileType;
         Timestamp = importRequest.Timestamp;
-        InvoiceType = importRequest.InvoiceType;
+        PaymentType = importRequest.PaymentType;
         Organisation = importRequest.Organisation;
         SchemeType = importRequest.SchemeType;
         AccountType = importRequest.AccountType;
         CreatedBy = importRequest.CreatedBy;
+        Status = importRequest.Status;
 
         PartitionKey = Guid.NewGuid().ToString();
         RowKey = $"{PartitionKey}_{Timestamp:O}";
