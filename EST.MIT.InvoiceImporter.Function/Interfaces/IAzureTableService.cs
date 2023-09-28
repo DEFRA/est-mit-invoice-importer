@@ -6,7 +6,7 @@ namespace EST.MIT.InvoiceImporter.Function.Interfaces;
 
 public interface IAzureTableService
 {
-    Task AddImportRequestAsync(ImportRequest importRequest);
+    Task UpsertImportRequestAsync(ImportRequest importRequest);
 
     Task<IEnumerable<ImportRequest>> GetAllImportRequestsAsync();
     Task<IEnumerable<ImportRequest>> GetUserImportRequestsAsync(string createdBy);

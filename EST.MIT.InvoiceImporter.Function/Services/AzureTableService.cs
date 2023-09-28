@@ -23,11 +23,11 @@ public class AzureTableService : IAzureTableService
         _client.CreateIfNotExists();
     }
 
-    public async Task AddImportRequestAsync(ImportRequest importRequest)
+    public async Task UpsertImportRequestAsync(ImportRequest importRequest)
     {
         var entity = new ImportRequestEntity(importRequest);
 
-        await _client.AddEntityAsync(entity);
+        await _client.UpsertEntityAsync(entity);
     }
 
     public Task<IEnumerable<ImportRequest>> GetAllImportRequestsAsync()
