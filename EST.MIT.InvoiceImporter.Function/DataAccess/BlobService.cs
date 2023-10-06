@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace EST.MIT.InvoiceImporter.Function.Services;
+namespace EST.MIT.InvoiceImporter.Function.DataAccess;
 public class BlobService : IBlobService
 {
     private string _fileName;

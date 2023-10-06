@@ -5,6 +5,7 @@ using EST.MIT.InvoiceImporter.Function.Configuration;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Services;
+using EST.MIT.InvoiceImporter.Function.DataAccess;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();
 
-        builder.Services.AddSingleton<IImporter, Importer>();
+        builder.Services.AddSingleton<IImporterFunctions, ImporterFunctions>();
         builder.Services.AddSingleton<IUploadFunctions, UploadFunctions>();
 
         builder.Services.AddSingleton<IBlobService, BlobService>();

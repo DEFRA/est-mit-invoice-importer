@@ -8,7 +8,7 @@ using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
 using EST.MIT.InvoiceImporter.Function.TableEntities;
 
-namespace EST.MIT.InvoiceImporter.Function.Services;
+namespace EST.MIT.InvoiceImporter.Function.DataAccess;
 
 public class AzureTableService : IAzureTableService
 {
