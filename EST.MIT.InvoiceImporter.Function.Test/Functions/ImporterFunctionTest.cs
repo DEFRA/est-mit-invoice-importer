@@ -14,7 +14,7 @@ public class ImporterTests
     private readonly Mock<ILogger> _mockLogger;
     private readonly Mock<IBinder> _mockBinder;
     private readonly IConfiguration _configuration;
-    private readonly Importer _importer;
+    private readonly ImporterFunctions _importer;
     private readonly Mock<IBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
 
@@ -45,7 +45,7 @@ public class ImporterTests
 
         var mockBlobService = new Mock<IBlobService>();
 
-        _importer = new Importer(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object, mockEventQueueService.Object);
+        _importer = new ImporterFunctions(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object, mockEventQueueService.Object, _mockTableService.Object);
 
     }
 
@@ -60,4 +60,42 @@ public class ImporterTests
 
         _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
     }
+
+    [Fact]
+    public async Task QueueTrigger_InvalidJson_LogsError()
+    {
+        await _importer.QueueTrigger("invalid json", _mockBinder.Object, _mockLogger.Object);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                null,
+                It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
+            Times.AtLeastOnce);
+    }
+
+    [Fact]
+    public async Task QueueTrigger_SuccessfulFileMove_LogsInformation()
+    {
+        _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), It.IsAny<IBinder>()))
+            .ReturnsAsync(new MemoryStream());
+        _mockBlobService.Setup(x => x.GetFileName())
+            .Returns("testfile.csv");
+        _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>()))
+            .ReturnsAsync(true);
+
+        await _importer.QueueTrigger("some valid json", _mockBinder.Object, _mockLogger.Object);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                null,
+                It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
+            Times.AtLeastOnce);
+    }
+
 }
