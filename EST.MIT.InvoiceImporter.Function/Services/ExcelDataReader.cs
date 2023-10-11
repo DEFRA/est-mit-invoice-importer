@@ -16,6 +16,7 @@ public class ExcelDataReader : IExcelDataReader
     private readonly WorkbookPart workbookPart;
     private readonly WorksheetPart worksheetPart;
     private static readonly int timeoutInSeconds = 60;
+    private static readonly string UkDateFormat = "dd/MM/yyyy";
 
     [ExcludeFromCodeCoverage]
     public ExcelDataReader(string filePath, string sheetName)
@@ -89,7 +90,7 @@ public class ExcelDataReader : IExcelDataReader
 
     private static string GetDateValue(string value)
     {
-        return DateTime.FromOADate(double.Parse(value)).ToShortDateString();
+        return DateTime.FromOADate(double.Parse(value)).ToString(UkDateFormat);
     }
 
     public Cell GetCell(string cellReference)

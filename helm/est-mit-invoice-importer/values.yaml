@@ -1,0 +1,69 @@
+environment: development
+name: est-mit-invoice-importer
+namespace: ffc-rpa
+workstream: ffc-rpa
+image: est-mit-invoice-importer
+
+labels: {}
+
+aadPodIdentity: true
+
+appInsights:
+  key:
+
+azureIdentity:
+  clientID: not-a-real-clientID
+  resourceID: not-a-real-resourceID
+
+containerConfigMap:
+  name: est-mit-invoice-importer-config-map
+
+containerSecret:
+  name: est-mit-invoice-importer-container-secret
+  type: Opaque
+
+deployment:
+  cpuThreshold: 80
+  memoryThreshold: 80
+  minReadySeconds: 0
+  minReplicas: 1
+  maxReplicas: 1
+  priorityClassName: default
+  replicas: 1
+  restartPolicy: Always
+
+container:
+  imagePullPolicy: IfNotPresent
+  requestMemory: 120Mi
+  requestCpu: 5m
+  limitMemory: 120Mi
+  limitCpu: 120m
+  port: 3000
+  functionsWorkerRuntime: dotnet
+  azureWebJobsSecretStorageType: files
+  azureWebJobsStorage: secret
+  queueConnectionString__queueServiceUri: "https://sndffcinfst1401.queue.core.windows.net/"
+  queueConnectionString__credential: "managedidentity"
+
+service:
+  port: 80
+  type: ClusterIP
+
+ingress:
+  class: nginx
+  endpoint: est-mit-invoice-importer
+  server: value.replaced.from.app.config
+
+livenessProbe:
+  path: /healthz
+  port: 3000
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  failureThreshold: 3
+
+readinessProbe:
+  path: /healthy
+  port: 3000
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  failureThreshold: 3

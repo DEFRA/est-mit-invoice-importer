@@ -5,7 +5,7 @@ data onto the invoice service.
 
 ## Entry Queue
 The function app requires:
-- Queue name: `invoice-importer`
+- Queue name: `rpa-mit-invoice-importer`
 
 ## Storage
 The function app uses Azure Storage for Table and Queue storage. 

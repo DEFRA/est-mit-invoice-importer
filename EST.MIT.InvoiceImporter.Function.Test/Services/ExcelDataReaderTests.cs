@@ -133,7 +133,7 @@ public class ExcelDataReaderTests
     [Fact]
     public void GetCellValue_ReturnsEmptyString_ForNullCell()
     {
-        Cell cell = null;
+        Cell? cell = null;
 
         var result = reader.GetCellValue(cell);
 

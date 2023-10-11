@@ -29,7 +29,7 @@ public class ImporterFunctions : IImporterFunctions
 
     [FunctionName("MainTrigger")]
     public async Task QueueTrigger(
-        [QueueTrigger("invoice-importer", Connection = "QueueConnectionString")] string importMessage,
+        [QueueTrigger("rpa-mit-invoice-importer", Connection = "QueueConnectionString")] string importMessage,
         IBinder blobBinder,
         ILogger log)
     {

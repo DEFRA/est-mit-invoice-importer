@@ -42,7 +42,7 @@ public class InputDataValidatorTests
         var filePath = "TestData/MIT Invoice Import Spreadsheet.xlsx";
         using (var document = SpreadsheetDocument.Open(filePath, false))
         {
-            WorkbookPart workbookPart = document.WorkbookPart;
+            WorkbookPart? workbookPart = document.WorkbookPart;
             toTest = new InputDataValidator();
 
             Assert.Throws<ArgumentException>(() => toTest.ProcessData(workbookPart, "NonExistentSheet"));
@@ -55,7 +55,7 @@ public class InputDataValidatorTests
         var filePath = "TestData/MIT Invoice Import Spreadsheet.xlsx";
         using (var document = SpreadsheetDocument.Open(filePath, false))
         {
-            WorkbookPart workbookPart = document.WorkbookPart;
+            WorkbookPart? workbookPart = document.WorkbookPart;
             toTest = new InputDataValidator();
 
             var exception = Record.Exception(() => toTest.ProcessData(workbookPart, "Invoices"));
