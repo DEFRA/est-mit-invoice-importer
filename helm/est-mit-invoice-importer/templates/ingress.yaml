@@ -1,0 +1,3 @@
+{{- include "ffc-helm-library.azure-ingress" (list . "est-mit-invoice-importer.ingress") -}}
+{{- define "est-mit-invoice-importer.ingress" -}}
+{{- end -}}
