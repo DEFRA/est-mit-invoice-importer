@@ -3,9 +3,6 @@ This Repository contains the code for the function app which parses bulk upload 
 It reads the bulk invoice csv file to be imported from blob storage, checks it for validation errors, parses it into invoice objects and sends the validated invoice
 data onto the invoice service.
 
-## Local dev
-For local dev, use the storage emeulator `Azurite` for queues
-
 ## Entry Queue
 The function app requires:
 - Queue name: `rpa-mit-invoice-importer`
@@ -25,7 +22,10 @@ This is the location where it puts the file once processed.
 
 'POST /invoice'
 
-## Build and Test
+## Build and Test locally
+
+Use the storage emeulator `Azurite` for queues/tables/blobs
+
 Create a local.settings.json file with the following content:
 ```
 {
