@@ -39,6 +39,7 @@ container:
   limitMemory: 120Mi
   limitCpu: 120m
   port: 3000
+  functionsWorkerRuntime: dotnet
   azureWebJobsSecretStorageType: files
   azureWebJobsStorage: secret
   queueConnectionString__queueServiceUri: "https://sndffcrpamitst1001.queue.core.windows.net/"
