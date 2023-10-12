@@ -41,7 +41,6 @@ container:
   port: 3000
   azureWebJobsSecretStorageType: files
   azureWebJobsStorage: secret
-  functionsWorkerRuntime: dotnet
   queueConnectionString__queueServiceUri: "https://sndffcrpamitst1001.queue.core.windows.net/"
   queueConnectionString__credential: "managedidentity"
   blobConnectionString__blobServiceUri: "https://sndffcrpamitst1001.blob.core.windows.net/"
