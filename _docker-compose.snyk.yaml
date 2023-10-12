@@ -10,4 +10,4 @@ services:
     entrypoint: /bin/sh
     volumes:
       - ./scripts/extract-project-assets.sh:/home/dotnet/extract-project-assets.sh
-      - ./EST.MIT.InvoiceImporter/obj:/home/dotnet/snyk
+      - ./EST.MIT.InvoiceImporter.Function/obj:/home/dotnet/snyk

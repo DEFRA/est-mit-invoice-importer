@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   est-mit-invoice-importer:
-    build:
-      target: development
+    image: est-mit-invoice-importer-development
+    container_name: est-mit-invoice-importer-development
     ports:
       - "3001:80"
     volumes:
-      - ./EST.MIT.InvoiceImporter:/home/dotnet/EST.MIT.InvoiceImporter
-      - ./EST.MIT.InvoiceImporter.Test:/home/dotnet/EST.MIT.InvoiceImporter.Test
+      - ./ESTMITInvoiceImporterFunction:/home/dotnet/EST.MIT.InvoiceImporter.Function
+      - ./ESTMITInvoiceImporterFunction.Test:/home/dotnet/EST.MIT.InvoiceImporter.Function.Test
