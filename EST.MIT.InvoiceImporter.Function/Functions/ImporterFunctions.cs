@@ -13,17 +13,13 @@ namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class ImporterFunctions : IImporterFunctions
 {
     private readonly IBlobService _blobService;
-    private readonly IConfiguration _configuration;
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly IEventQueueService _eventQueueService;
     private readonly IAzureTableService _azureTableService;
 
-    public ImporterFunctions(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService, IEventQueueService eventQueueService, IAzureTableService azureTableService)
+    public ImporterFunctions(IBlobService blobService, IAzureBlobService azureBlobService, IAzureTableService azureTableService)
     {
         _blobService = blobService;
-        _configuration = configuration;
-        _eventQueueService = eventQueueService;
-        _blobServiceClient = azureBlobService.BlobServiceClient ?? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
+        _blobServiceClient = azureBlobService.GetBlobServiceClient();
         _azureTableService = azureTableService;
     }
 

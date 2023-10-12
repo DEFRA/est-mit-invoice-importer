@@ -16,18 +16,10 @@ using Microsoft.Extensions.Logging;
 namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class UploadFunctions : IUploadFunctions
 {
-    private readonly IBlobService _blobService;
-    private readonly IConfiguration _configuration;
-    private readonly BlobServiceClient _blobServiceClient;
-    private readonly IEventQueueService _eventQueueService;
     private readonly IAzureTableService _azureTableService;
 
-    public UploadFunctions(IBlobService blobService, IConfiguration configuration, IAzureBlobService azureBlobService, IEventQueueService eventQueueService, IAzureTableService azureTableService)
+    public UploadFunctions(IAzureTableService azureTableService)
     {
-        _blobService = blobService;
-        _configuration = configuration;
-        _eventQueueService = eventQueueService;
-        _blobServiceClient = azureBlobService.BlobServiceClient ?? new BlobServiceClient(_configuration.GetConnectionString("PrimaryConnection"));
         _azureTableService = azureTableService;
     }
 

@@ -44,7 +44,7 @@ public class BlobService : IBlobService
 
         var blobAttr = new BlobAttribute($"invoices/import/{importRequest.FileName}", FileAccess.Read)
         {
-            Connection = "StorageConnectionString"
+            Connection = "BlobConnectionString"
         };
 
         _fileName = importRequest.FileName;
@@ -56,7 +56,7 @@ public class BlobService : IBlobService
     {
         try
         {
-            var containerClient = blobServiceClient.GetBlobContainerClient("invoices");
+            var containerClient = blobServiceClient.GetBlobContainerClient("rpa-mit-invoices");
             var sourceBlobClient = containerClient.GetBlobClient($"import/{fileName}");
             var destBlobClient = containerClient.GetBlobClient($"archive/{fileName}");
             CopyFromUriOperation copyOperation = await destBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri);

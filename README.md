@@ -32,6 +32,25 @@ To run the function:
 
 'func start'
 
+## Example payload
+
+1. Ensure you have file 'test1.xlsx' in blob storage under folder 'import'
+2. Paste this payload into the rpa-mit-invoice-importer queue
+```
+{
+ "fileName": "test1.xlsx",
+ "fileSize": 1024,
+ "fileType": "xlsx",
+ "timestamp": "2023-10-01 09:07:10",
+ "paymentType": "",
+ "organisation": "myOrg",
+ "schemeType": "pbs",
+ "accountType": "",
+ "createdBy": "Steve Dickinson"
+}
+```
+3. The file 'test1.xlsx' should get processed and moved from /import to /archive in blob storage
+
 ## Useful links
 
 - [Use dependency injection in .NET Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection)
