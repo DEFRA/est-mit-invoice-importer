@@ -9,7 +9,7 @@ For local dev, use the storage emeulator `Azurite` for queues
 ## Entry Queue
 The function app requires:
 - Queue name: `rpa-mit-invoice-importer`
-
+ 
 ## Storage
 The function app uses Azure Storage for Table and Queue storage. 
 
