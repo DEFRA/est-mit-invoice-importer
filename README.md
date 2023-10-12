@@ -25,7 +25,20 @@ This is the location where it puts the file once processed.
 
 'POST /invoice'
 
-## Build and Test 
+## Build and Test
+Create a local.settings.json file with the following content:
+```
+{
+    "IsEncrypted": false,
+    "Values": {
+      "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+      "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+      "QueueConnectionString": "UseDevelopmentStorage=true",
+      "BlobConnectionString": "UseDevelopmentStorage=true",
+      "TableConnectionString": "UseDevelopmentStorage=true"
+    }
+}
+```
 To run the function:
 
 'cd EST.MIT.InvoiceImporter.Function'
