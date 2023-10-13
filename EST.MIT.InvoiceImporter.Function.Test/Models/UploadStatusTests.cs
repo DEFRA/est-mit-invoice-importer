@@ -1,7 +1,5 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using EST.MIT.InvoiceImporter.Function.Models;
-using Xunit;
 
 namespace EST.MIT.InvoiceImporter.Function.Test.Models;
 

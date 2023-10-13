@@ -2,7 +2,6 @@ using EST.MIT.InvoiceImporter.Function.Models;
 using Moq;
 using Azure.Data.Tables;
 using EST.MIT.InvoiceImporter.Function.DataAccess;
-using EST.MIT.InvoiceImporter.Function.Services;
 using EST.MIT.InvoiceImporter.Function.TableEntities;
 using Azure;
 using AutoMapper;
