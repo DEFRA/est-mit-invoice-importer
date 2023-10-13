@@ -3,9 +3,6 @@ This Repository contains the code for the function app which parses bulk upload 
 It reads the bulk invoice csv file to be imported from blob storage, checks it for validation errors, parses it into invoice objects and sends the validated invoice
 data onto the invoice service.
 
-## Local dev
-For local dev, use the storage emeulator `Azurite` for queues
-
 ## Entry Queue
 The function app requires:
 - Queue name: `rpa-mit-invoice-importer`
@@ -25,12 +22,47 @@ This is the location where it puts the file once processed.
 
 'POST /invoice'
 
-## Build and Test 
+## Build and Test locally
+
+Use the storage emeulator `Azurite` for queues/tables/blobs
+
+Create a local.settings.json file with the following content:
+```
+{
+    "IsEncrypted": false,
+    "Values": {
+      "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+      "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+      "QueueConnectionString": "UseDevelopmentStorage=true",
+      "BlobConnectionString": "UseDevelopmentStorage=true",
+      "TableConnectionString": "UseDevelopmentStorage=true"
+    }
+}
+```
 To run the function:
 
 'cd EST.MIT.InvoiceImporter.Function'
 
 'func start'
+
+## Example payload
+
+1. Ensure you have file 'test1.xlsx' in blob storage under folder 'import'
+2. Paste this payload into the rpa-mit-invoice-importer queue
+```
+{
+ "fileName": "test1.xlsx",
+ "fileSize": 1024,
+ "fileType": "xlsx",
+ "timestamp": "2023-10-01 09:07:10",
+ "paymentType": "",
+ "organisation": "myOrg",
+ "schemeType": "pbs",
+ "accountType": "",
+ "createdBy": "Steve Dickinson"
+}
+```
+3. The file 'test1.xlsx' should get processed and moved from /import to /archive in blob storage
 
 ## Useful links
 

@@ -5,6 +5,7 @@ services:
     build:
       target: development
     image: est-mit-invoice-importer
+    tty: true
     container_name: est-mit-invoice-importer
     entrypoint: dotnet test ./EST.MIT.InvoiceImporter.Function.Test/EST.MIT.InvoiceImporter.Function.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./test-output/'
     volumes:

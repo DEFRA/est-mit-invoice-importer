@@ -37,18 +37,12 @@ public class UploadFunctionsTests
         var mockBlobServiceClient = new Mock<BlobServiceClient>();
         var mockAzureBlobService = new Mock<IAzureBlobService>();
 
-        var mockEventQueueService = new Mock<IEventQueueService>();
-
-        mockEventQueueService
-            .Setup(x => x.CreateMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<PaymentRequestsBatch?>()))
-            .Returns(Task.CompletedTask);
-
         var mockAzureTableService = new Mock<IAzureTableService>();
-        mockAzureBlobService.Setup(x => x.BlobServiceClient).Returns(mockBlobServiceClient.Object);
+        mockAzureBlobService.Setup(x => x.GetBlobServiceClient()).Returns(mockBlobServiceClient.Object);
 
         var mockBlobService = new Mock<IBlobService>();
 
-        _uploadFunctions = new UploadFunctions(Mock.Of<IBlobService>(), _configuration, mockAzureBlobService.Object, mockEventQueueService.Object, _mockTableService.Object);
+        _uploadFunctions = new UploadFunctions(_mockTableService.Object);
     }
 
     [Fact]
