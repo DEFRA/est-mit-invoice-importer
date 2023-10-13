@@ -13,6 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using Azure.Data.Tables;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Queues;
 
 [assembly: FunctionsStartup(typeof(Startup.Function.Startup))]
 
@@ -61,6 +62,16 @@ public class Startup : FunctionsStartup
             {
                 return new AzureBlobService(new BlobServiceClient(Configuration.GetSection("BlobConnectionString").Value));
             }
+        });
+
+
+        builder.Services.AddSingleton<IEventQueueService>(_ =>
+        {
+            var eventQueueName = builder.GetContext().Configuration["EventQueueName"];
+            var queueConnectionString = builder.GetContext().Configuration["QueueConnectionString"];
+
+            var eventQueueClient = new QueueClient(queueConnectionString, eventQueueName);
+            return new EventQueueService(eventQueueClient);
         });
 
         builder.Services.AddSingleton<IImporterFunctions, ImporterFunctions>();

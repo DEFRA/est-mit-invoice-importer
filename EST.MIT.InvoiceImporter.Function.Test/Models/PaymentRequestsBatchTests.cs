@@ -1,7 +1,4 @@
 using EST.MIT.InvoiceImporter.Function.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace EST.MIT.InvoiceImporter.Function.Test.Models;
 
