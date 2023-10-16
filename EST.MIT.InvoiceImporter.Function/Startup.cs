@@ -67,7 +67,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IEventQueueService>(_ =>
         {
-            var eventQueueName = Configuration.GetSection("ServiceBusEventQueueName").Value;
+            var eventQueueName = Configuration.GetSection("EventQueueName").Value;
             var queueConnectionString = Configuration.GetSection("QueueConnectionString:Credential").Value;
             var managedIdentityNamespace = Configuration.GetSection("QueueConnectionString:fullyQualifiedNamespace").Value;
 

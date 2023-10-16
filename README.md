@@ -36,7 +36,7 @@ Create a local.settings.json file with the following content:
       "QueueConnectionString": "UseDevelopmentStorage=true",
       "BlobConnectionString": "UseDevelopmentStorage=true",
       "TableConnectionString": "UseDevelopmentStorage=true",
-      "ServiceBusEventQueueName": "mit-queue-name"
+      "EventQueueName": "mit-queue-name"
     }
 }
 ```
