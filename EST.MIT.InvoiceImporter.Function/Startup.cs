@@ -38,8 +38,8 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IAzureTableService>(_ =>
         {
-            var storageAccountCredential = Configuration.GetSection("TableConnectionString:Credential").Value;
-            if (IsManagedIdentity(storageAccountCredential))
+            var tableStorageAccountCredential = Configuration.GetSection("TableConnectionString:Credential").Value;
+            if (IsManagedIdentity(tableStorageAccountCredential))
             {
                 var tableServiceUri = new Uri(Configuration.GetSection("TableConnectionString:TableServiceUri").Value);
                 return new AzureTableService(new TableClient(tableServiceUri, "importrequests", new DefaultAzureCredential()), mapperConfig.CreateMapper());
@@ -52,8 +52,8 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IAzureBlobService>(_ =>
         {
-            var storageAccountCredential = Configuration.GetSection("BlobConnectionString:Credential").Value;
-            if (IsManagedIdentity(storageAccountCredential))
+            var blobStorageAccountCredential = Configuration.GetSection("BlobConnectionString:Credential").Value;
+            if (IsManagedIdentity(blobStorageAccountCredential))
             {
                 var blobServiceUri = new Uri(Configuration.GetSection("BlobConnectionString:BlobServiceUri").Value);
                 return new AzureBlobService(new BlobServiceClient(blobServiceUri, new DefaultAzureCredential()));
@@ -67,15 +67,25 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IEventQueueService>(_ =>
         {
-            var eventQueueName = builder.GetContext().Configuration["EventQueueName"];
-            var queueConnectionString = builder.GetContext().Configuration["QueueConnectionString"];
+            var eventQueueName = Configuration.GetSection("EventQueueName").Value;
+            var queueConnectionString = Configuration.GetSection("QueueConnectionString:Credential").Value;
+            var managedIdentityNamespace = Configuration.GetSection("QueueConnectionString:fullyQualifiedNamespace").Value;
 
-            var eventQueueClient = new QueueClient(queueConnectionString, eventQueueName);
-            return new EventQueueService(eventQueueClient);
+            if (IsManagedIdentity(queueConnectionString))
+            {
+                var queueServiceUri = Configuration.GetSection("QueueConnectionString:QueueServiceUri").Value;
+                var queueUrl = new Uri($"{queueServiceUri}{eventQueueName}");
+                return new EventQueueService(new QueueClient(queueUrl, new DefaultAzureCredential()));
+            }
+            else
+            {
+                return new EventQueueService(new QueueClient(Configuration.GetSection("QueueConnectionString").Value, eventQueueName));
+            }
         });
 
         builder.Services.AddSingleton<IImporterFunctions, ImporterFunctions>();
         builder.Services.AddSingleton<IUploadFunctions, UploadFunctions>();
+
 
         builder.Services.AddSingleton<IBlobService, BlobService>();
     }
