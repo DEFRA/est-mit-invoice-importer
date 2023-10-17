@@ -5,7 +5,6 @@ using EST.MIT.Importer.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -16,11 +15,16 @@ public class ImporterFunctions : IImporterFunctions
     private readonly BlobServiceClient _blobServiceClient;
     private readonly IAzureTableService _azureTableService;
 
-    public ImporterFunctions(IBlobService blobService, IAzureBlobService azureBlobService, IAzureTableService azureTableService)
+    private readonly IEventQueueService _eventQueueService;
+    private readonly INotificationService _notificationService;
+
+    public ImporterFunctions(IBlobService blobService, IAzureBlobService azureBlobService, IAzureTableService azureTableService, IEventQueueService eventQueueService, INotificationService notificationService)
     {
         _blobService = blobService;
         _blobServiceClient = azureBlobService.GetBlobServiceClient();
         _azureTableService = azureTableService;
+        _eventQueueService = eventQueueService;
+        _notificationService = notificationService;
     }
 
     [FunctionName("MainTrigger")]

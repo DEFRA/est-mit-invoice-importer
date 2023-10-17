@@ -35,7 +35,8 @@ Create a local.settings.json file with the following content:
       "AzureWebJobsStorage": "UseDevelopmentStorage=true",
       "QueueConnectionString": "UseDevelopmentStorage=true",
       "BlobConnectionString": "UseDevelopmentStorage=true",
-      "TableConnectionString": "UseDevelopmentStorage=true"
+      "TableConnectionString": "UseDevelopmentStorage=true",
+      "EventQueueName": "mit-queue-name"
     }
 }
 ```
