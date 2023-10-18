@@ -1,4 +1,4 @@
-# Introduction 
+# Introduction
 This Repository contains the code for the function app which parses bulk upload data from blob storage when triggered from the message queue. 
 It reads the bulk invoice csv file to be imported from blob storage, checks it for validation errors, parses it into invoice objects and sends the validated invoice
 data onto the invoice service.
