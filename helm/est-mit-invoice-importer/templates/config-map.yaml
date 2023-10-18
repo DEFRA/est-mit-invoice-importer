@@ -10,4 +10,6 @@ data:
   BlobConnectionString__credential: {{ quote .Values.container.blobConnectionString__credential }}
   TableConnectionString__tableServiceUri: {{ quote .Values.container.tableConnectionString__tableServiceUri }}
   TableConnectionString__credential: {{ quote .Values.container.tableConnectionString__credential }}
+  EventQueueName: {{ quote .Values.container.eventQueueName }}
+  WebUIBaseUrl: {{ quote .Values.container.webUIBaseUrl }}
 {{- end -}}

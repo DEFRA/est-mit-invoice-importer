@@ -36,7 +36,8 @@ Create a local.settings.json file with the following content:
       "QueueConnectionString": "UseDevelopmentStorage=true",
       "BlobConnectionString": "UseDevelopmentStorage=true",
       "TableConnectionString": "UseDevelopmentStorage=true",
-      "EventQueueName": "mit-queue-name"
+      "EventQueueName": "rpa-mit-events",
+      "WebUIBaseUrl": "https://localhost:3000"
     }
 }
 ```
