@@ -48,6 +48,8 @@ container:
   blobConnectionString__credential: value-from-app-config-service
   tableConnectionString__tableServiceUri: value-from-app-config-service
   tableConnectionString__credential: value-from-app-config-service
+  eventQueueName: value-from-app-config-service
+  webUIBaseUrl: value-from-app-config-service
 
 service:
   port: 80

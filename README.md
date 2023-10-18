@@ -1,4 +1,4 @@
-# Introduction 
+# Introduction
 This Repository contains the code for the function app which parses bulk upload data from blob storage when triggered from the message queue. 
 It reads the bulk invoice csv file to be imported from blob storage, checks it for validation errors, parses it into invoice objects and sends the validated invoice
 data onto the invoice service.
@@ -36,7 +36,8 @@ Create a local.settings.json file with the following content:
       "QueueConnectionString": "UseDevelopmentStorage=true",
       "BlobConnectionString": "UseDevelopmentStorage=true",
       "TableConnectionString": "UseDevelopmentStorage=true",
-      "EventQueueName": "mit-queue-name"
+      "EventQueueName": "rpa-mit-events",
+      "WebUIBaseUrl": "https://localhost:3000"
     }
 }
 ```
