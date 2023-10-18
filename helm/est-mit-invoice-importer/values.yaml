@@ -42,12 +42,12 @@ container:
   functionsWorkerRuntime: dotnet
   azureWebJobsSecretStorageType: files
   azureWebJobsStorage: secret
-  queueConnectionString__queueServiceUri: "https://sndffcrpamitst1001.queue.core.windows.net/"
-  queueConnectionString__credential: "managedidentity"
-  blobConnectionString__blobServiceUri: "https://sndffcrpamitst1001.blob.core.windows.net/"
-  blobConnectionString__credential: "managedidentity"
-  tableConnectionString__tableServiceUri: "https://sndffcrpamitst1001.table.core.windows.net/"
-  tableConnectionString__credential: "managedidentity"
+  queueConnectionString__queueServiceUri: value-from-app-config-service
+  queueConnectionString__credential: value-from-app-config-service
+  blobConnectionString__blobServiceUri: value-from-app-config-service
+  blobConnectionString__credential: value-from-app-config-service
+  tableConnectionString__tableServiceUri: value-from-app-config-service
+  tableConnectionString__credential: value-from-app-config-service
 
 service:
   port: 80

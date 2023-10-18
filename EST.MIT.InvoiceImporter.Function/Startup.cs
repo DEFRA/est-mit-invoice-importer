@@ -42,6 +42,7 @@ public class Startup : FunctionsStartup
             if (IsManagedIdentity(tableStorageAccountCredential))
             {
                 var tableServiceUri = new Uri(Configuration.GetSection("TableConnectionString:TableServiceUri").Value);
+                Console.WriteLine($"Startup.TableClient using Managed Identity with url {tableServiceUri}");
                 return new AzureTableService(new TableClient(tableServiceUri, "importrequests", new DefaultAzureCredential()), mapperConfig.CreateMapper());
             }
             else
@@ -56,6 +57,7 @@ public class Startup : FunctionsStartup
             if (IsManagedIdentity(blobStorageAccountCredential))
             {
                 var blobServiceUri = new Uri(Configuration.GetSection("BlobConnectionString:BlobServiceUri").Value);
+                Console.WriteLine($"Startup.BlobClient using Managed Identity with url {blobServiceUri}");
                 return new AzureBlobService(new BlobServiceClient(blobServiceUri, new DefaultAzureCredential()));
             }
             else
