@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using EST.MIT.Importer.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
@@ -15,10 +16,14 @@ namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class UploadFunctions : IUploadFunctions
 {
     private readonly IAzureTableService _azureTableService;
+    private readonly IAzureBlobService _blobService;
+    private readonly BlobServiceClient _blobServiceClient;
 
-    public UploadFunctions(IAzureTableService azureTableService)
+    public UploadFunctions(IAzureTableService azureTableService, IAzureBlobService azureBlobService)
     {
         _azureTableService = azureTableService;
+        _blobService = azureBlobService;
+        _blobServiceClient = azureBlobService.GetBlobServiceClient();
     }
 
     [FunctionName("GetUploadsByUser")]

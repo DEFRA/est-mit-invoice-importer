@@ -11,14 +11,14 @@ using Newtonsoft.Json;
 namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class ImporterFunctions : IImporterFunctions
 {
-    private readonly IBlobService _blobService;
+    private readonly IAzureBlobService _blobService;
     private readonly BlobServiceClient _blobServiceClient;
     private readonly IAzureTableService _azureTableService;
 
     private readonly IEventQueueService _eventQueueService;
     private readonly INotificationService _notificationService;
 
-    public ImporterFunctions(IBlobService blobService, IAzureBlobService azureBlobService, IAzureTableService azureTableService, IEventQueueService eventQueueService, INotificationService notificationService)
+    public ImporterFunctions(IAzureBlobService blobService, IAzureBlobService azureBlobService, IAzureTableService azureTableService, IEventQueueService eventQueueService, INotificationService notificationService)
     {
         _blobService = blobService;
         _blobServiceClient = azureBlobService.GetBlobServiceClient();

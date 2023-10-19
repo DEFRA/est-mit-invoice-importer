@@ -8,6 +8,7 @@ using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.DataAccess;
 using Azure.Storage.Blobs;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace EST.MIT.InvoiceImporter.Function.Services
 {
@@ -24,55 +25,56 @@ namespace EST.MIT.InvoiceImporter.Function.Services
         /// <param name="mapperConfig">Automapper config</param>
         public static void AddTableBlobQueueServices(this IServiceCollection services, IConfiguration configuration, MapperConfiguration mapperConfig)
         {
-        services.AddSingleton<IAzureTableService>(_ =>
-        {
-            var tableStorageAccountCredential = configuration.GetSection("TableConnectionString:Credential").Value;
-            if (IsManagedIdentity(tableStorageAccountCredential))
+            services.AddSingleton<IAzureTableService>(_ =>
             {
-                var tableServiceUri = new Uri(configuration.GetSection("TableConnectionString:TableServiceUri").Value);
-                Console.WriteLine($"Startup.TableClient using Managed Identity with url {tableServiceUri}");
-                return new AzureTableService(new TableClient(tableServiceUri, "importrequests", new DefaultAzureCredential()), mapperConfig.CreateMapper());
-            }
-            else
-            {
-                return new AzureTableService(new TableClient(configuration.GetSection("TableConnectionString").Value, "importrequests"), mapperConfig.CreateMapper());
-            }
-        });
+                var tableStorageAccountCredential = configuration.GetSection("TableConnectionString:Credential").Value;
+                if (IsManagedIdentity(tableStorageAccountCredential))
+                {
+                    var tableServiceUri = new Uri(configuration.GetSection("TableConnectionString:TableServiceUri").Value);
+                    Console.WriteLine($"Startup.TableClient using Managed Identity with url {tableServiceUri}");
+                    return new AzureTableService(new TableClient(tableServiceUri, "importrequests", new DefaultAzureCredential()), mapperConfig.CreateMapper());
+                }
+                else
+                {
+                    return new AzureTableService(new TableClient(configuration.GetSection("TableConnectionString").Value, "importrequests"), mapperConfig.CreateMapper());
+                }
+            });
 
-        services.AddSingleton<IAzureBlobService>(_ =>
-        {
-            var blobStorageAccountCredential = configuration.GetSection("BlobConnectionString:Credential").Value;
-            if (IsManagedIdentity(blobStorageAccountCredential))
+            services.AddSingleton<IAzureBlobService>(_ =>
             {
-                var blobServiceUri = new Uri(configuration.GetSection("BlobConnectionString:BlobServiceUri").Value);
-                Console.WriteLine($"Startup.BlobClient using Managed Identity with url {blobServiceUri}");
-                return new AzureBlobService(new BlobServiceClient(blobServiceUri, new DefaultAzureCredential()));
-            }
-            else
-            {
-                return new AzureBlobService(new BlobServiceClient(configuration.GetSection("BlobConnectionString").Value));
-            }
-        });
+                var blobStorageAccountCredential = configuration.GetSection("BlobConnectionString:Credential").Value;
+                var logger = _.GetService<ILogger<AzureBlobService>>();
+                if (IsManagedIdentity(blobStorageAccountCredential))
+                {
+                    var blobServiceUri = new Uri(configuration.GetSection("BlobConnectionString:BlobServiceUri").Value);
+                    Console.WriteLine($"Startup.BlobClient using Managed Identity with url {blobServiceUri}");
+                    return new AzureBlobService(new BlobServiceClient(blobServiceUri, new DefaultAzureCredential()), logger);
+                }
+                else
+                {
+                    return new AzureBlobService(new BlobServiceClient(configuration.GetSection("BlobConnectionString").Value), logger);
+                }
+            });
 
 
-        services.AddSingleton<IEventQueueService>(_ =>
-        {
-            var eventQueueName = configuration.GetSection("EventQueueName").Value;
-            var queueConnectionString = configuration.GetSection("QueueConnectionString:Credential").Value;
-            var managedIdentityNamespace = configuration.GetSection("QueueConnectionString:fullyQualifiedNamespace").Value;
+            services.AddSingleton<IEventQueueService>(_ =>
+            {
+                var eventQueueName = configuration.GetSection("EventQueueName").Value;
+                var queueConnectionString = configuration.GetSection("QueueConnectionString:Credential").Value;
+                var managedIdentityNamespace = configuration.GetSection("QueueConnectionString:fullyQualifiedNamespace").Value;
 
-            if (IsManagedIdentity(queueConnectionString))
-            {
-                var queueServiceUri = configuration.GetSection("QueueConnectionString:QueueServiceUri").Value;
-                var queueUrl = new Uri($"{queueServiceUri}{eventQueueName}");
-                return new EventQueueService(new QueueClient(queueUrl, new DefaultAzureCredential()));
-            }
-            else
-            {
-                return new EventQueueService(new QueueClient(configuration.GetSection("QueueConnectionString").Value, eventQueueName));
-            }
-        });
-       }
+                if (IsManagedIdentity(queueConnectionString))
+                {
+                    var queueServiceUri = configuration.GetSection("QueueConnectionString:QueueServiceUri").Value;
+                    var queueUrl = new Uri($"{queueServiceUri}{eventQueueName}");
+                    return new EventQueueService(new QueueClient(queueUrl, new DefaultAzureCredential()));
+                }
+                else
+                {
+                    return new EventQueueService(new QueueClient(configuration.GetSection("QueueConnectionString").Value, eventQueueName));
+                }
+            });
+        }
 
         private static bool IsManagedIdentity(string credentialName)
         {

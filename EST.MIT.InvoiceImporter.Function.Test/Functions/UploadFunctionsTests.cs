@@ -17,14 +17,14 @@ public class UploadFunctionsTests
     private readonly Mock<IBinder> _mockBinder;
     private readonly IConfiguration _configuration;
     private readonly UploadFunctions _uploadFunctions;
-    private readonly Mock<IBlobService> _mockBlobService;
+    private readonly Mock<IAzureBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
 
     public UploadFunctionsTests()
     {
         _mockLogger = new Mock<ILogger>();
         _mockBinder = new Mock<IBinder>();
-        _mockBlobService = new Mock<IBlobService>();
+        _mockBlobService = new Mock<IAzureBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
 
         var mockConfig = new Mock<IConfiguration>();
@@ -39,9 +39,9 @@ public class UploadFunctionsTests
         var mockAzureTableService = new Mock<IAzureTableService>();
         mockAzureBlobService.Setup(x => x.GetBlobServiceClient()).Returns(mockBlobServiceClient.Object);
 
-        var mockBlobService = new Mock<IBlobService>();
+        var mockBlobService = new Mock<IAzureBlobService>();
 
-        _uploadFunctions = new UploadFunctions(_mockTableService.Object);
+        _uploadFunctions = new UploadFunctions(_mockTableService.Object, _mockBlobService.Object);
     }
 
     [Fact]

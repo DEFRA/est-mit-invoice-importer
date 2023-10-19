@@ -5,26 +5,25 @@ using Moq;
 using Newtonsoft.Json;
 using System.Reflection;
 using EST.MIT.InvoiceImporter.Function.DataAccess;
+using Azure.Storage.Blobs;
 
 namespace EST.MIT.InvoiceImporter.Function.Services.Tests;
-public class BlobServiceTests
+public class AzureBlobServiceTests
 {
     [Fact]
     public async Task ReadBLOBIntoStream_WithValidImportRequest_ReturnsStream()
     {
-        // Arrange
         var importRequest = new ImportRequest { FileName = "test-file.txt" };
         var importRequestJson = JsonConvert.SerializeObject(importRequest);
         var blobBinder = new Mock<IBinder>();
         var blobStream = new MemoryStream();
         blobBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), CancellationToken.None)).ReturnsAsync(blobStream);
-        var logger = new Mock<ILogger<BlobService>>();
-        var blobService = new BlobService(logger.Object);
+        var logger = new Mock<ILogger<AzureBlobService>>();
+        var blobServiceClientMock = new Mock<BlobServiceClient>();
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
 
-        // Act
         var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
-        // Assert
         Assert.NotNull(result);
         Assert.IsType<MemoryStream>(result);
     }
@@ -34,9 +33,9 @@ public class BlobServiceTests
     {
         var importRequestJson = "invalid-json";
         var blobBinder = new Mock<IBinder>();
-        var logger = new Mock<ILogger<BlobService>>();
-        var blobService = new BlobService(logger.Object);
-
+        var logger = new Mock<ILogger<AzureBlobService>>();
+        var blobServiceClientMock = new Mock<BlobServiceClient>();
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
         var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
         Assert.Null(result);
@@ -47,8 +46,9 @@ public class BlobServiceTests
     {
         string? importRequestJson = null;
         var blobBinder = new Mock<IBinder>();
-        var logger = new Mock<ILogger<BlobService>>();
-        var blobService = new BlobService(logger.Object);
+        var logger = new Mock<ILogger<AzureBlobService>>();
+        var blobServiceClientMock = new Mock<BlobServiceClient>();
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
 
         var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
@@ -58,9 +58,10 @@ public class BlobServiceTests
     [Fact]
     public void GetFileName_ReturnsFileName()
     {
-        var logger = new Mock<ILogger<BlobService>>();
-        var expectedFileName = "test-file.txt";
-        var blobService = new BlobService(logger.Object);
+        var logger = new Mock<ILogger<AzureBlobService>>();
+        var expectedFileName = "test-file.xlsx";
+        var blobServiceClientMock = new Mock<BlobServiceClient>();
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
 
         blobService.GetType().GetField("_fileName", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(blobService, expectedFileName);
 

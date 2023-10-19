@@ -4,6 +4,7 @@ namespace EST.MIT.InvoiceImporter.Function.Models;
 
 public class ImportRequest
 {
+    public Guid ImportRequestId { get; set; }
     public string FileName { get; set; }
     public int FileSize { get; set; }
     public string FileType { get; set; }
@@ -15,4 +16,5 @@ public class ImportRequest
     public string AccountType { get; set; }
     public string CreatedBy { get; init; }
     public UploadStatus Status { get; init; }
+    public string BlobPath { get; set; }
 }
