@@ -16,14 +16,10 @@ namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class UploadFunctions : IUploadFunctions
 {
     private readonly IAzureTableService _azureTableService;
-    private readonly IAzureBlobService _blobService;
-    private readonly BlobServiceClient _blobServiceClient;
 
-    public UploadFunctions(IAzureTableService azureTableService, IAzureBlobService azureBlobService)
+    public UploadFunctions(IAzureTableService azureTableService)
     {
         _azureTableService = azureTableService;
-        _blobService = azureBlobService;
-        _blobServiceClient = azureBlobService.GetBlobServiceClient();
     }
 
     [FunctionName("GetUploadsByUser")]

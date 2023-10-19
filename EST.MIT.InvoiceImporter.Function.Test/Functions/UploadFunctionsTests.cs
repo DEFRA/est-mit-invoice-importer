@@ -24,7 +24,6 @@ public class UploadFunctionsTests
     {
         _mockLogger = new Mock<ILogger>();
         _mockBinder = new Mock<IBinder>();
-        _mockBlobService = new Mock<IAzureBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
 
         var mockConfig = new Mock<IConfiguration>();
@@ -33,15 +32,7 @@ public class UploadFunctionsTests
         mockConfig.Setup(x => x.GetSection(It.Is<string>(y => y == "ConnectionStrings:PrimaryConnection"))).Returns(mockConfigSection.Object);
         _configuration = mockConfig.Object;
 
-        var mockBlobServiceClient = new Mock<BlobServiceClient>();
-        var mockAzureBlobService = new Mock<IAzureBlobService>();
-
-        var mockAzureTableService = new Mock<IAzureTableService>();
-        mockAzureBlobService.Setup(x => x.GetBlobServiceClient()).Returns(mockBlobServiceClient.Object);
-
-        var mockBlobService = new Mock<IAzureBlobService>();
-
-        _uploadFunctions = new UploadFunctions(_mockTableService.Object, _mockBlobService.Object);
+        _uploadFunctions = new UploadFunctions(_mockTableService.Object);
     }
 
     [Fact]
