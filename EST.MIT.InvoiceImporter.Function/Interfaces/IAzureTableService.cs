@@ -10,4 +10,5 @@ public interface IAzureTableService
 
     Task<IEnumerable<ImportRequest>> GetAllImportRequestsAsync();
     Task<IEnumerable<ImportRequest>> GetUserImportRequestsAsync(string createdBy);
+    Task<ImportRequest> GetUserImportRequestsByImportRequestIdAsync(string ImportRequestId);
 }

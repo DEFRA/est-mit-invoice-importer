@@ -11,16 +11,16 @@ namespace EST.MIT.InvoiceImporter.Function.Test.Services;
 
 public class AzureTableServiceTests
 {
-
     private readonly Mock<TableClient> _tableClient = new();
     private readonly AzureTableService _datasetService;
 
     public AzureTableServiceTests()
     {
         var mapperConfig = new MapperConfiguration(mc =>
-      {
-          mc.AddProfile(new ImportRequestMapper());
-      });
+        {
+            mc.AddProfile(new ImportRequestMapper());
+        });
+        mapperConfig.AssertConfigurationIsValid();
         IMapper mapper = mapperConfig.CreateMapper();
 
         _datasetService = new AzureTableService(_tableClient.Object, mapper);
@@ -168,5 +168,41 @@ public class AzureTableServiceTests
 
         Assert.Equal("test.xlsx", list[1].FileName);
         Assert.Equal("AR", list[1].PaymentType);
+    }
+
+    [Fact]
+    public async Task GetUserImportRequestsByImportRequestIdAsync_ReturnsEntity_WhenEntityExists()
+    {
+        var mockDataset = new ImportRequest
+        {
+            ImportRequestId = Guid.Parse("f3939c6a-3527-4c0a-a649-f662f116d296"),
+            FileName = "test.xlsx",
+            FileSize = 1024,
+            FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Timestamp = DateTimeOffset.Now,
+            PaymentType = "AR",
+            Organisation = "RDT",
+            SchemeType = "CP",
+            AccountType = "First Payment"
+        };
+
+        var mockResponse = new Mock<Response<ImportRequestEntity>>();
+        mockResponse.Setup(r => r.Value).Returns(new ImportRequestEntity(mockDataset));
+
+        _tableClient.Setup(x => x.GetEntityAsync<ImportRequestEntity>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(mockResponse.Object));
+
+        var result = await _datasetService.GetUserImportRequestsByImportRequestIdAsync("f3939c6a-3527-4c0a-a649-f662f116d296");
+
+        Assert.NotNull(result);
+        Assert.Equal(mockDataset.ImportRequestId, result.ImportRequestId);
+        Assert.Equal(mockDataset.FileName, result.FileName);
+        Assert.Equal(mockDataset.FileSize, result.FileSize);
+        Assert.Equal(mockDataset.FileType, result.FileType);
+        Assert.Equal(mockDataset.Timestamp, result.Timestamp);
+        Assert.Equal(mockDataset.PaymentType, result.PaymentType);
+        Assert.Equal(mockDataset.Organisation, result.Organisation);
+        Assert.Equal(mockDataset.SchemeType, result.SchemeType);
+        Assert.Equal(mockDataset.AccountType, result.AccountType);
     }
 }

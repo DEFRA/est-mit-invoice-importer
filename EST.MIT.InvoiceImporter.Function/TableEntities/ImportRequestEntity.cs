@@ -39,7 +39,7 @@ public class ImportRequestEntity : ITableEntity
         CreatedBy = importRequest.CreatedBy;
         Status = importRequest.Status;
 
-        PartitionKey = Guid.NewGuid().ToString();
+        PartitionKey = importRequest.ImportRequestId.ToString();
         RowKey = $"{PartitionKey}_{Timestamp:O}";
     }
 }
