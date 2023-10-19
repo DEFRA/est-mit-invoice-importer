@@ -53,4 +53,11 @@ public class AzureTableService : IAzureTableService
 
         return Task.FromResult(dataset);
     }
+
+    public async Task<ImportRequest> GetUserImportRequestsByImportRequestIdAsync(string ImportRequestId)
+    {
+        var entity = await _client.GetEntityAsync<ImportRequestEntity>("mit-import-request", ImportRequestId);
+
+        return _mapper.Map<ImportRequest>(entity.Value);
+    }
 }

@@ -4,17 +4,11 @@ using EST.MIT.InvoiceImporter.Function.AutoMapperProfiles;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Services;
-using EST.MIT.InvoiceImporter.Function.DataAccess;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Azure.Data.Tables;
-using Azure.Identity;
-using Azure.Storage.Blobs;
-using Azure.Storage.Queues;
-using System.Reflection.Metadata.Ecma335;
 
 [assembly: FunctionsStartup(typeof(Startup.Function.Startup))]
 

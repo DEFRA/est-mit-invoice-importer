@@ -1,8 +1,7 @@
+using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +12,25 @@ namespace EST.MIT.InvoiceImporter.Function.Test.Functions;
 public class UploadFunctionsTests
 {
     private readonly Mock<ILogger> _mockLogger;
-    private readonly Mock<IBinder> _mockBinder;
-    private readonly IConfiguration _configuration;
     private readonly UploadFunctions _uploadFunctions;
+    private readonly Mock<IAzureBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
 
     public UploadFunctionsTests()
     {
         _mockLogger = new Mock<ILogger>();
-        _mockBinder = new Mock<IBinder>();
+        _mockBlobService = new Mock<IAzureBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
 
-        var mockConfig = new Mock<IConfiguration>();
-        var mockConfigSection = new Mock<IConfigurationSection>();
-        mockConfigSection.Setup(x => x.Value).Returns("some_text");
-        mockConfig.Setup(x => x.GetSection(It.Is<string>(y => y == "ConnectionStrings:PrimaryConnection"))).Returns(mockConfigSection.Object);
-        _configuration = mockConfig.Object;
+        var mockBlobServiceClient = new Mock<BlobServiceClient>();
+        var mockAzureBlobService = new Mock<IAzureBlobService>();
 
-        _uploadFunctions = new UploadFunctions(_mockTableService.Object);
+        var mockAzureTableService = new Mock<IAzureTableService>();
+        mockAzureBlobService.Setup(x => x.GetBlobServiceClient()).Returns(mockBlobServiceClient.Object);
+
+        var mockBlobService = new Mock<IAzureBlobService>();
+
+        _uploadFunctions = new UploadFunctions(_mockTableService.Object, _mockBlobService.Object);
     }
 
     [Fact]
@@ -62,5 +62,38 @@ public class UploadFunctionsTests
         Assert.IsType<StatusCodeResult>(result);
         var statusCodeResult = result as StatusCodeResult;
         Assert.Equal((int)HttpStatusCode.InternalServerError, statusCodeResult.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetUploadedFile_ReturnsFileStreamResult_WhenFileExists()
+    {
+        string refId = "testRef";
+        var mockImportRequest = new ImportRequest { FileName = "test-file.txt" };
+        var mockStream = new MemoryStream();
+
+        _mockTableService.Setup(s => s.GetUserImportRequestsByImportRequestIdAsync(refId))
+            .ReturnsAsync(mockImportRequest);
+        _mockBlobService.Setup(s => s.GetFileByFileNameAsync(mockImportRequest.FileName))
+            .ReturnsAsync(mockStream);
+
+        var result = await _uploadFunctions.GetUploadedFile(null, refId, _mockLogger.Object);
+
+        Assert.IsType<FileStreamResult>(result);
+        var fileResult = result as FileStreamResult;
+        Assert.Equal("application/octet-stream", fileResult.ContentType);
+        Assert.Equal(mockImportRequest.FileName, fileResult.FileDownloadName);
+    }
+
+    [Fact]
+    public async Task GetUploadedFile_ReturnsNotFoundResult_WhenFileDoesNotExist()
+    {
+        string refId = "testRef";
+
+        _mockTableService.Setup(s => s.GetUserImportRequestsByImportRequestIdAsync(refId))
+            .ReturnsAsync((ImportRequest?)null);
+
+        var result = await _uploadFunctions.GetUploadedFile(null, refId, _mockLogger.Object);
+
+        Assert.IsType<NotFoundResult>(result);
     }
 }

@@ -16,10 +16,12 @@ namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class UploadFunctions : IUploadFunctions
 {
     private readonly IAzureTableService _azureTableService;
+    private readonly IAzureBlobService _blobService;
 
-    public UploadFunctions(IAzureTableService azureTableService)
+    public UploadFunctions(IAzureTableService azureTableService, IAzureBlobService azureBlobService)
     {
         _azureTableService = azureTableService;
+        _blobService = azureBlobService;
     }
 
     [FunctionName("GetUploadsByUser")]
@@ -38,5 +40,28 @@ public class UploadFunctions : IUploadFunctions
             log.LogError($"An error occurred while fetching import requests for user {UserId}: {ex.Message}");
             return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
         }
+    }
+
+    [FunctionName("GetUploadedFile")]
+    public async Task<IActionResult> GetUploadedFile(
+      [HttpTrigger(AuthorizationLevel.Function, "get", Route = "UploadedFile/{Ref}")] HttpRequest req,
+      string Ref,
+      ILogger log)
+    {
+        log.LogInformation($"[GetUploadedFile] Received request for Ref: {Ref}");
+
+        var importRequest = await _azureTableService.GetUserImportRequestsByImportRequestIdAsync(Ref);
+        if (importRequest == null)
+        {
+            return new NotFoundResult();
+        }
+
+        var fileStream = await _blobService.GetFileByFileNameAsync(importRequest.FileName);
+        if (fileStream == null)
+        {
+            return new NotFoundResult();
+        }
+
+        return new FileStreamResult(fileStream, "application/octet-stream") { FileDownloadName = importRequest.FileName };
     }
 }
