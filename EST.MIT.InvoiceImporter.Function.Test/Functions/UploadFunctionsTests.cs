@@ -1,4 +1,3 @@
-using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
@@ -17,7 +16,6 @@ public class UploadFunctionsTests
     private readonly Mock<IBinder> _mockBinder;
     private readonly IConfiguration _configuration;
     private readonly UploadFunctions _uploadFunctions;
-    private readonly Mock<IAzureBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
 
     public UploadFunctionsTests()
