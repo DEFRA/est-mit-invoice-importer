@@ -12,14 +12,21 @@ using System.IO;
 using System.Threading.Tasks;
 
 namespace EST.MIT.InvoiceImporter.Function.DataAccess;
-public class BlobService : IBlobService
+public class AzureBlobService : IAzureBlobService
 {
+    private readonly BlobServiceClient _blobServiceClient;
     private string _fileName;
-    private readonly ILogger<BlobService> _logger;
+    private readonly ILogger<AzureBlobService> _logger;
 
-    public BlobService(ILogger<BlobService> logger)
+    public AzureBlobService(BlobServiceClient blobServiceClient, ILogger<AzureBlobService> logger)
     {
+        _blobServiceClient = blobServiceClient;
         _logger = logger;
+    }
+
+    public BlobServiceClient? GetBlobServiceClient()
+    {
+        return _blobServiceClient;
     }
 
     public async Task<Stream> ReadBLOBIntoStream(string importMsg, IBinder blobBinder)
@@ -82,5 +89,18 @@ public class BlobService : IBlobService
     public virtual string GetFileName()
     {
         return _fileName;
+    }
+
+    public async Task<Stream> GetFileByFileNameAsync(string fileName)
+    {
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient("rpa-mit-invoices");
+        var blobClient = blobContainerClient.GetBlobClient($"import/{fileName}");
+
+        if (!await blobClient.ExistsAsync())
+        {
+            return null;
+        }
+
+        return await blobClient.OpenReadAsync();
     }
 }

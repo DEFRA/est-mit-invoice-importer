@@ -30,7 +30,6 @@ public class Startup : FunctionsStartup
 
         Console.WriteLine("Configuring services...");
 
-        builder.Services.AddSingleton<IAzureTableService, AzureTableService>();
 
         var mapperConfig = new MapperConfiguration(mc =>
         {
@@ -41,7 +40,6 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IImporterFunctions, ImporterFunctions>();
         builder.Services.AddSingleton<IUploadFunctions, UploadFunctions>();
-        builder.Services.AddSingleton<IBlobService, BlobService>();
         builder.Services.AddSingleton<INotificationService>(_ => new NotificationService(Configuration));
     }
 }

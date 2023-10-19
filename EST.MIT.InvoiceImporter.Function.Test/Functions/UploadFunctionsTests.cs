@@ -1,4 +1,3 @@
-using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
@@ -17,14 +16,12 @@ public class UploadFunctionsTests
     private readonly Mock<IBinder> _mockBinder;
     private readonly IConfiguration _configuration;
     private readonly UploadFunctions _uploadFunctions;
-    private readonly Mock<IBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
 
     public UploadFunctionsTests()
     {
         _mockLogger = new Mock<ILogger>();
         _mockBinder = new Mock<IBinder>();
-        _mockBlobService = new Mock<IBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
 
         var mockConfig = new Mock<IConfiguration>();
@@ -32,14 +29,6 @@ public class UploadFunctionsTests
         mockConfigSection.Setup(x => x.Value).Returns("some_text");
         mockConfig.Setup(x => x.GetSection(It.Is<string>(y => y == "ConnectionStrings:PrimaryConnection"))).Returns(mockConfigSection.Object);
         _configuration = mockConfig.Object;
-
-        var mockBlobServiceClient = new Mock<BlobServiceClient>();
-        var mockAzureBlobService = new Mock<IAzureBlobService>();
-
-        var mockAzureTableService = new Mock<IAzureTableService>();
-        mockAzureBlobService.Setup(x => x.GetBlobServiceClient()).Returns(mockBlobServiceClient.Object);
-
-        var mockBlobService = new Mock<IBlobService>();
 
         _uploadFunctions = new UploadFunctions(_mockTableService.Object);
     }
