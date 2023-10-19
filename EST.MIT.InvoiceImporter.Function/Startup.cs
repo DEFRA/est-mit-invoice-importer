@@ -30,7 +30,6 @@ public class Startup : FunctionsStartup
 
         Console.WriteLine("Configuring services...");
 
-        builder.Services.AddSingleton<IAzureTableService, AzureTableService>();
 
         var mapperConfig = new MapperConfiguration(mc =>
         {
@@ -39,6 +38,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddTableBlobQueueServices(Configuration, mapperConfig);
 
+        builder.Services.AddSingleton<IAzureTableService, AzureTableService>();
         builder.Services.AddSingleton<IImporterFunctions, ImporterFunctions>();
         builder.Services.AddSingleton<IUploadFunctions, UploadFunctions>();
         builder.Services.AddSingleton<IAzureBlobService, AzureBlobService>();

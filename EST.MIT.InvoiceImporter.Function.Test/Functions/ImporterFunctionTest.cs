@@ -41,7 +41,7 @@ public class ImporterTests
 
         var mockBlobService = new Mock<IAzureBlobService>();
 
-        _importer = new ImporterFunctions(Mock.Of<IAzureBlobService>(), mockAzureBlobService.Object, _mockTableService.Object, _eventQueueService.Object, _notificationService.Object);
+        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object, _eventQueueService.Object, _notificationService.Object);
 
     }
 
