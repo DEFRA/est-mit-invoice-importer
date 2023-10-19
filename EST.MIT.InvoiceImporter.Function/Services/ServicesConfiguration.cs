@@ -60,18 +60,18 @@ namespace EST.MIT.InvoiceImporter.Function.Services
             services.AddSingleton<IEventQueueService>(_ =>
             {
                 var eventQueueName = configuration.GetSection("EventQueueName").Value;
-                var queueConnectionString = configuration.GetSection("QueueConnectionString:Credential").Value;
-                var managedIdentityNamespace = configuration.GetSection("QueueConnectionString:fullyQualifiedNamespace").Value;
+                var queueConnectionString = configuration.GetSection("queueStorageAccountCredential:Credential").Value;
+                var managedIdentityNamespace = configuration.GetSection("queueStorageAccountCredential:fullyQualifiedNamespace").Value;
 
                 if (IsManagedIdentity(queueConnectionString))
                 {
-                    var queueServiceUri = configuration.GetSection("QueueConnectionString:QueueServiceUri").Value;
+                    var queueServiceUri = configuration.GetSection("queueStorageAccountCredential:QueueServiceUri").Value;
                     var queueUrl = new Uri($"{queueServiceUri}{eventQueueName}");
                     return new EventQueueService(new QueueClient(queueUrl, new DefaultAzureCredential()));
                 }
                 else
                 {
-                    return new EventQueueService(new QueueClient(configuration.GetSection("QueueConnectionString").Value, eventQueueName));
+                    return new EventQueueService(new QueueClient(configuration.GetSection("queueStorageAccountCredential").Value, eventQueueName));
                 }
             });
         }
