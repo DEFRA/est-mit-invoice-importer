@@ -10,6 +10,7 @@ public class ImportRequestEntityTests
     {
         var request = new ImportRequest
         {
+            ImportRequestId = Guid.Parse("f3939c6a-3527-4c0a-a649-f662f116d296"),
             FileName = "test.xlsx",
             FileSize = 1024,
             FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -34,5 +35,10 @@ public class ImportRequestEntityTests
         Assert.Equal("First Payment", importRequestEntity.AccountType);
         Assert.Equal("test@example.com", importRequestEntity.CreatedBy);
         Assert.Equal(UploadStatus.Uploaded, importRequestEntity.Status);
+
+        Assert.Equal(request.ImportRequestId.ToString(), importRequestEntity.PartitionKey);
+        Assert.StartsWith(request.ImportRequestId.ToString(), importRequestEntity.RowKey);
+        Assert.Contains(importRequestEntity.Timestamp.Value.ToString("O"), importRequestEntity.RowKey);
+        Assert.Equal(default, importRequestEntity.ETag);
     }
 }

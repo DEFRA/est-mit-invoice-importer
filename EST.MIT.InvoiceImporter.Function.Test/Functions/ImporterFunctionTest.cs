@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
+using EST.MIT.InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -94,4 +95,25 @@ public class ImporterTests
             Times.AtLeastOnce);
     }
 
+    [Fact]
+    public async Task QueueTrigger_FailedFileMove_LogsWarning()
+    {
+        _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), It.IsAny<IBinder>()))
+            .ReturnsAsync(new MemoryStream());
+        _mockBlobService.Setup(x => x.GetFileName())
+            .Returns("testfile.csv");
+        _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>()))
+            .ReturnsAsync(false);
+
+        await _importer.QueueTrigger("some valid json", _mockBinder.Object, _mockLogger.Object);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                null,
+                It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
+            Times.AtLeastOnce);
+    }
 }

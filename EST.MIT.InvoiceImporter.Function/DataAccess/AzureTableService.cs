@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,8 +25,12 @@ public class AzureTableService : IAzureTableService
 
     public async Task UpsertImportRequestAsync(ImportRequest importRequest)
     {
-        var entity = new ImportRequestEntity(importRequest);
+        if (importRequest.ImportRequestId == Guid.Empty)
+        {
+            importRequest.ImportRequestId = Guid.NewGuid();
+        }
 
+        var entity = new ImportRequestEntity(importRequest);
         await _client.UpsertEntityAsync(entity);
     }
 
