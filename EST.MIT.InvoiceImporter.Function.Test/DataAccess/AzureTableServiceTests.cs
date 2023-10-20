@@ -81,6 +81,34 @@ public class AzureTableServiceTests
     }
 
     [Fact]
+    public async Task UpsertImportRequestAsyncAssignsGuidIfEmpty()
+    {
+        var mockDataset = new ImportRequest
+        {
+            FileName = "test.xlsx",
+            FileSize = 1024,
+            FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Timestamp = DateTimeOffset.Now,
+            PaymentType = "AR",
+            Organisation = "RDT",
+            SchemeType = "CP",
+            AccountType = "First Payment"
+        };
+
+        Assert.Equal(Guid.Empty, mockDataset.ImportRequestId);
+
+        await _datasetService.UpsertImportRequestAsync(mockDataset);
+
+        Assert.NotEqual(Guid.Empty, mockDataset.ImportRequestId);
+
+        _tableClient.Verify(x => x.UpsertEntityAsync(
+                It.IsAny<ImportRequestEntity>(),
+                It.IsAny<TableUpdateMode>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task GetAllDatasetsShouldReturnMostRecentEntityInEachPartition()
     {
         var page = Page<ImportRequestEntity>.FromValues(new[]

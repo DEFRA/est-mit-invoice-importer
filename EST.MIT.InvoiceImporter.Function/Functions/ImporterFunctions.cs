@@ -12,39 +12,48 @@ namespace EST.MIT.InvoiceImporter.Function.Functions;
 public class ImporterFunctions : IImporterFunctions
 {
     private readonly IAzureBlobService _blobService;
-    private readonly BlobServiceClient _blobServiceClient;
     private readonly IAzureTableService _azureTableService;
 
-    private readonly IEventQueueService _eventQueueService;
-    private readonly INotificationService _notificationService;
 
-    public ImporterFunctions(IAzureBlobService azureBlobService, IAzureTableService azureTableService, IEventQueueService eventQueueService, INotificationService notificationService)
+    public ImporterFunctions(IAzureBlobService azureBlobService, IAzureTableService azureTableService)
     {
         _blobService = azureBlobService;
-        _blobServiceClient = azureBlobService.GetBlobServiceClient();
         _azureTableService = azureTableService;
-        _eventQueueService = eventQueueService;
-        _notificationService = notificationService;
     }
 
     [FunctionName("MainTrigger")]
     public async Task QueueTrigger(
         [QueueTrigger("rpa-mit-invoice-importer", Connection = "QueueConnectionString")] string importMessage,
-        IBinder blobBinder,
-        ILogger log)
+            IBinder blobBinder,
+            ILogger log)
     {
-        log.LogInformation($"[MainTrigger] Recieved message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
-        using (await _blobService.ReadBLOBIntoStream(importMessage, blobBinder))
-        {
-            var isMoved = await _blobService.MoveFileToArchive(_blobService.GetFileName(), _blobServiceClient);
+        log.LogInformation($"[MainTrigger] Received message: {importMessage} at {DateTime.UtcNow.ToLongTimeString()}");
 
-            if (isMoved)
+        try
+        {
+            using (await _blobService.ReadBLOBIntoStream(importMessage, blobBinder))
             {
-                var importRequest = JsonConvert.DeserializeObject<ImportRequest>(importMessage);
-                importRequest.FileName = $"archive/{importRequest.FileName}";
-                var newImportMessage = JsonConvert.SerializeObject(importRequest);
-                await _azureTableService.UpsertImportRequestAsync(importRequest);
+                BlobServiceClient blobServiceClient = _blobService.GetBlobServiceClient();
+                var isMoved = await _blobService.MoveFileToArchive(_blobService.GetFileName(), blobServiceClient);
+
+                if (isMoved)
+                {
+                    var importRequest = JsonConvert.DeserializeObject<ImportRequest>(importMessage);
+                    importRequest.FileName = $"archive/{importRequest.FileName}";
+                    var newImportMessage = JsonConvert.SerializeObject(importRequest);
+                    await _azureTableService.UpsertImportRequestAsync(importRequest);
+                    log.LogInformation($"[MainTrigger] Successfully moved and processed file: {importRequest.FileName}");
+                }
+                else
+                {
+                    log.LogWarning($"[MainTrigger] Failed to move the file to archive.");
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, $"[MainTrigger] An error occurred while processing the message: {importMessage}");
+            throw;
         }
     }
 }

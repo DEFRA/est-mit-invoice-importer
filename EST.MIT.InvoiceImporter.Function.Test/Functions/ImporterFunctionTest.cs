@@ -1,6 +1,7 @@
 using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
+using EST.MIT.InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,8 +16,6 @@ public class ImporterTests
     private readonly ImporterFunctions _importer;
     private readonly Mock<IAzureBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
-    private readonly Mock<IEventQueueService> _eventQueueService;
-    private readonly Mock<INotificationService> _notificationService;
 
     public ImporterTests()
     {
@@ -24,8 +23,6 @@ public class ImporterTests
         _mockBinder = new Mock<IBinder>();
         _mockBlobService = new Mock<IAzureBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
-        _eventQueueService = new Mock<IEventQueueService>();
-        _notificationService = new Mock<INotificationService>();
 
         var mockConfig = new Mock<IConfiguration>();
         var mockConfigSection = new Mock<IConfigurationSection>();
@@ -41,7 +38,7 @@ public class ImporterTests
 
         var mockBlobService = new Mock<IAzureBlobService>();
 
-        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object, _eventQueueService.Object, _notificationService.Object);
+        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object);
 
     }
 
@@ -94,4 +91,25 @@ public class ImporterTests
             Times.AtLeastOnce);
     }
 
+    [Fact]
+    public async Task QueueTrigger_FailedFileMove_LogsWarning()
+    {
+        _mockBlobService.Setup(x => x.ReadBLOBIntoStream(It.IsAny<string>(), It.IsAny<IBinder>()))
+            .ReturnsAsync(new MemoryStream());
+        _mockBlobService.Setup(x => x.GetFileName())
+            .Returns("testfile.csv");
+        _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>()))
+            .ReturnsAsync(false);
+
+        await _importer.QueueTrigger("some valid json", _mockBinder.Object, _mockLogger.Object);
+
+        _mockLogger.Verify(
+            x => x.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => true),
+                null,
+                It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
+            Times.AtLeastOnce);
+    }
 }
