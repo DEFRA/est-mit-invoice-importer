@@ -16,8 +16,6 @@ public class ImporterTests
     private readonly ImporterFunctions _importer;
     private readonly Mock<IAzureBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
-    private readonly Mock<IEventQueueService> _eventQueueService;
-    private readonly Mock<INotificationService> _notificationService;
 
     public ImporterTests()
     {
@@ -25,8 +23,6 @@ public class ImporterTests
         _mockBinder = new Mock<IBinder>();
         _mockBlobService = new Mock<IAzureBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
-        _eventQueueService = new Mock<IEventQueueService>();
-        _notificationService = new Mock<INotificationService>();
 
         var mockConfig = new Mock<IConfiguration>();
         var mockConfigSection = new Mock<IConfigurationSection>();
@@ -42,7 +38,7 @@ public class ImporterTests
 
         var mockBlobService = new Mock<IAzureBlobService>();
 
-        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object, _eventQueueService.Object, _notificationService.Object);
+        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object);
 
     }
 

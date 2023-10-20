@@ -14,20 +14,16 @@ public class ImporterFunctions : IImporterFunctions
     private readonly IAzureBlobService _blobService;
     private readonly IAzureTableService _azureTableService;
 
-    private readonly IEventQueueService _eventQueueService;
-    private readonly INotificationService _notificationService;
 
-    public ImporterFunctions(IAzureBlobService azureBlobService, IAzureTableService azureTableService, IEventQueueService eventQueueService, INotificationService notificationService)
+    public ImporterFunctions(IAzureBlobService azureBlobService, IAzureTableService azureTableService)
     {
         _blobService = azureBlobService;
         _azureTableService = azureTableService;
-        _eventQueueService = eventQueueService;
-        _notificationService = notificationService;
     }
 
     [FunctionName("MainTrigger")]
     public async Task QueueTrigger(
-            [QueueTrigger("rpa-mit-invoice-importer", Connection = "QueueConnectionString")] string importMessage,
+        [QueueTrigger("rpa-mit-invoice-importer", Connection = "QueueConnectionString")] string importMessage,
             IBinder blobBinder,
             ILogger log)
     {
