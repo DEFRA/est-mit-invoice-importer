@@ -17,11 +17,20 @@ public class AzureBlobService : IAzureBlobService
     private readonly BlobServiceClient _blobServiceClient;
     private string _fileName;
     private readonly ILogger<AzureBlobService> _logger;
+    private readonly string _blobContainerName;
 
-    public AzureBlobService(BlobServiceClient blobServiceClient, ILogger<AzureBlobService> logger)
+    public const string folder_import = "import";
+    public const string folder_processing = "processing";
+    public const string folder_failed = "failed";
+    public const string folder_archive = "archive";
+
+    public const string default_BlobContainerName = "rpa-mit-invoices";
+
+    public AzureBlobService(BlobServiceClient blobServiceClient, ILogger<AzureBlobService> logger, string blobContainerName)
     {
         _blobServiceClient = blobServiceClient;
         _logger = logger;
+        _blobContainerName = blobContainerName;
     }
 
     public BlobServiceClient? GetBlobServiceClient()
@@ -49,38 +58,38 @@ public class AzureBlobService : IAzureBlobService
             return blobStream;
         }
 
-        var blobAttr = new BlobAttribute($"invoices/import/{importRequest.FileName}", FileAccess.Read)
+        var blobAttr = new BlobAttribute($"rpa-mit-invoices/{importRequest.BlobFolder}/{importRequest.BlobFileName}", FileAccess.Read)
         {
             Connection = "BlobConnectionString"
         };
 
-        _fileName = importRequest.FileName;
+        _fileName = importRequest.BlobFileName;
         return await blobBinder.BindAsync<Stream>(blobAttr);
     }
 
     [ExcludeFromCodeCoverage]
-    public async Task<bool> MoveFileToArchive(string fileName, BlobServiceClient blobServiceClient)
+    public async Task<bool> MoveFileToArchive(string blobFileName, BlobServiceClient blobServiceClient)
     {
         try
         {
-            var containerClient = blobServiceClient.GetBlobContainerClient("rpa-mit-invoices");
-            var sourceBlobClient = containerClient.GetBlobClient($"import/{fileName}");
-            var destBlobClient = containerClient.GetBlobClient($"archive/{fileName}");
+            var containerClient = blobServiceClient.GetBlobContainerClient(_blobContainerName);
+            var sourceBlobClient = containerClient.GetBlobClient($"{folder_import}/{blobFileName}");
+            var destBlobClient = containerClient.GetBlobClient($"{folder_archive}/{blobFileName}");
             CopyFromUriOperation copyOperation = await destBlobClient.StartCopyFromUriAsync(sourceBlobClient.Uri);
             await copyOperation.WaitForCompletionAsync();
             await sourceBlobClient.DeleteIfExistsAsync();
-            _logger.LogInformation($"File {fileName} moved to archive folder.");
+            _logger.LogInformation($"File {blobFileName} moved to {folder_archive} folder.");
             return true;
         }
         catch (RequestFailedException ex)
         {
-            _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+            _logger.LogError($"An error occured when moving the file [{blobFileName}] to the {folder_archive} folder.");
             _logger.LogError(ex.ErrorCode);
             return false;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"An error occured when moving the file [{fileName}] to the archive folder.");
+            _logger.LogError($"An error occured when moving the file [{blobFileName}] to the {folder_archive} folder.");
             _logger.LogError(ex.Message);
             return false;
         }
@@ -93,8 +102,8 @@ public class AzureBlobService : IAzureBlobService
 
     public async Task<Stream> GetFileByFileNameAsync(string fileName)
     {
-        var blobContainerClient = _blobServiceClient.GetBlobContainerClient("rpa-mit-invoices");
-        var blobClient = blobContainerClient.GetBlobClient($"import/{fileName}");
+        var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_blobContainerName);
+        var blobClient = blobContainerClient.GetBlobClient(fileName);
 
         if (!await blobClient.ExistsAsync())
         {

@@ -7,7 +7,9 @@ namespace EST.MIT.InvoiceImporter.Function.TableEntities;
 
 public class ImportRequestEntity : ITableEntity
 {
-    public string PartitionKey { get; set; } = null!;
+    public const string DefaultPartitionKey = "mit-import-request";
+
+    public string PartitionKey { get; set; } = DefaultPartitionKey;
     public string RowKey { get; set; } = null!;
     public string FileName { get; set; }
     public int FileSize { get; set; }
@@ -19,6 +21,8 @@ public class ImportRequestEntity : ITableEntity
     public string AccountType { get; set; }
     public string CreatedBy { get; init; }
     public UploadStatus Status { get; init; }
+    public string BlobFileName { get; set; }
+    public string BlobFolder { get; set; }
 
     public ETag ETag { get; set; }
 
@@ -38,8 +42,10 @@ public class ImportRequestEntity : ITableEntity
         AccountType = importRequest.AccountType;
         CreatedBy = importRequest.CreatedBy;
         Status = importRequest.Status;
+        BlobFileName = importRequest.BlobFileName;
+        BlobFolder = importRequest.BlobFolder;
 
-        PartitionKey = importRequest.ImportRequestId.ToString();
-        RowKey = $"{PartitionKey}_{Timestamp:O}";
+        PartitionKey = DefaultPartitionKey;
+        RowKey = importRequest.ImportRequestId.ToString();
     }
 }

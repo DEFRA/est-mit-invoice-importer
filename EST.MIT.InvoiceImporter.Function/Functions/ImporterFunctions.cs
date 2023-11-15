@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using EST.MIT.Importer.Function.Interfaces;
+using EST.MIT.InvoiceImporter.Function.DataAccess;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
 using EST.MIT.InvoiceImporter.Function.Models;
 using Microsoft.Azure.WebJobs;
@@ -39,7 +39,8 @@ public class ImporterFunctions : IImporterFunctions
                 if (isMoved)
                 {
                     var importRequest = JsonConvert.DeserializeObject<ImportRequest>(importMessage);
-                    importRequest.FileName = $"archive/{importRequest.FileName}";
+                    importRequest.BlobFolder = AzureBlobService.folder_archive;
+                    importRequest.Status = UploadStatus.Uploaded;
                     var newImportMessage = JsonConvert.SerializeObject(importRequest);
                     await _azureTableService.UpsertImportRequestAsync(importRequest);
                     log.LogInformation($"[MainTrigger] Successfully moved and processed file: {importRequest.FileName}");

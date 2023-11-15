@@ -20,7 +20,9 @@ public class ImportRequestEntityTests
             SchemeType = "CP",
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
-            Status = UploadStatus.Uploaded
+            Status = UploadStatus.Uploaded,
+            BlobFileName="BlobFileName",
+            BlobFolder="BlobFolder"
         };
 
         var importRequestEntity = new ImportRequestEntity(request);
@@ -35,10 +37,11 @@ public class ImportRequestEntityTests
         Assert.Equal("First Payment", importRequestEntity.AccountType);
         Assert.Equal("test@example.com", importRequestEntity.CreatedBy);
         Assert.Equal(UploadStatus.Uploaded, importRequestEntity.Status);
+        Assert.Equal("BlobFileName", importRequestEntity.BlobFileName);
+        Assert.Equal("BlobFolder", importRequestEntity.BlobFolder);
 
-        Assert.Equal(request.ImportRequestId.ToString(), importRequestEntity.PartitionKey);
+        Assert.Equal(ImportRequestEntity.DefaultPartitionKey, importRequestEntity.PartitionKey);
         Assert.StartsWith(request.ImportRequestId.ToString(), importRequestEntity.RowKey);
-        Assert.Contains(importRequestEntity.Timestamp.Value.ToString("O"), importRequestEntity.RowKey);
         Assert.Equal(default, importRequestEntity.ETag);
     }
 }
