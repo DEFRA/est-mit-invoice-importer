@@ -12,15 +12,15 @@ namespace EST.MIT.InvoiceImporter.Function.DataAccess;
 
 public class AzureTableService : IAzureTableService
 {
-    private readonly TableClient _client;
+    private readonly TableClient _tableClient;
     private readonly IMapper _mapper;
 
     public AzureTableService(TableClient client, IMapper mapper)
     {
-        _client = client;
+        _tableClient = client;
         _mapper = mapper;
 
-        _client.CreateIfNotExists();
+        _tableClient.CreateIfNotExists();
     }
 
     public async Task UpsertImportRequestAsync(ImportRequest importRequest)
@@ -31,12 +31,12 @@ public class AzureTableService : IAzureTableService
         }
 
         var entity = new ImportRequestEntity(importRequest);
-        await _client.UpsertEntityAsync(entity);
+        await _tableClient.UpsertEntityAsync(entity);
     }
 
     public Task<IEnumerable<ImportRequest>> GetAllImportRequestsAsync()
     {
-        var query = _client.Query<ImportRequestEntity>()
+        var query = _tableClient.Query<ImportRequestEntity>()
                      .OrderByDescending(e => e.Timestamp);
 
         var entities = query.AsEnumerable();
@@ -48,8 +48,8 @@ public class AzureTableService : IAzureTableService
 
     public Task<IEnumerable<ImportRequest>> GetUserImportRequestsAsync(string createdBy)
     {
-        var query = _client.Query<ImportRequestEntity>()
-                .Where(i => i.CreatedBy == createdBy)
+        var query = _tableClient.Query<ImportRequestEntity>()
+                //.Where(i => i.CreatedBy == createdBy)     // ## Return for all users for now
                 .OrderByDescending(e => e.Timestamp);
 
         var entities = query.AsEnumerable();
@@ -61,8 +61,13 @@ public class AzureTableService : IAzureTableService
 
     public async Task<ImportRequest> GetUserImportRequestsByImportRequestIdAsync(string ImportRequestId)
     {
-        var entity = await _client.GetEntityAsync<ImportRequestEntity>("mit-import-request", ImportRequestId);
-
-        return _mapper.Map<ImportRequest>(entity.Value);
+        try
+        {
+            var entity = await _tableClient.GetEntityAsync<ImportRequestEntity>(ImportRequestEntity.DefaultPartitionKey, ImportRequestId);
+            return _mapper.Map<ImportRequest>(entity.Value);
+        } catch (Exception ex)
+        {
+            return null;
+        }
     }
 }

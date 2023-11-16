@@ -56,7 +56,7 @@ public class UploadFunctions : IUploadFunctions
             return new NotFoundResult();
         }
 
-        var fileStream = await _blobService.GetFileByFileNameAsync(importRequest.FileName);
+        var fileStream = await _blobService.GetFileByFileNameAsync($"{importRequest.BlobFolder}/{importRequest.BlobFileName}");
         if (fileStream == null)
         {
             return new NotFoundResult();

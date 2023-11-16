@@ -68,12 +68,12 @@ public class UploadFunctionsTests
     public async Task GetUploadedFile_ReturnsFileStreamResult_WhenFileExists()
     {
         string refId = "testRef";
-        var mockImportRequest = new ImportRequest { FileName = "test-file.txt" };
+        var mockImportRequest = new ImportRequest { FileName = "test-file.txt", BlobFileName="BlobFileName", BlobFolder="BlobFolder" };
         var mockStream = new MemoryStream();
 
         _mockTableService.Setup(s => s.GetUserImportRequestsByImportRequestIdAsync(refId))
             .ReturnsAsync(mockImportRequest);
-        _mockBlobService.Setup(s => s.GetFileByFileNameAsync(mockImportRequest.FileName))
+        _mockBlobService.Setup(s => s.GetFileByFileNameAsync($"{ mockImportRequest.BlobFolder}/{mockImportRequest.BlobFileName}"))
             .ReturnsAsync(mockStream);
 
         var result = await _uploadFunctions.GetUploadedFile(null, refId, _mockLogger.Object);

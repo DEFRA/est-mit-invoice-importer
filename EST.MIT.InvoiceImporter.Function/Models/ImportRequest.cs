@@ -15,6 +15,7 @@ public class ImportRequest
     public string SchemeType { get; set; }
     public string AccountType { get; set; }
     public string CreatedBy { get; init; }
-    public UploadStatus Status { get; init; }
-    public string BlobPath { get; set; }
+    public UploadStatus Status { get; set; }
+    public string BlobFileName { get; set; }
+    public string BlobFolder { get; set; }
 }

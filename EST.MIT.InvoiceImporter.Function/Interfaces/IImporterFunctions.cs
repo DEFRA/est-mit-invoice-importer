@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace EST.MIT.Importer.Function.Interfaces;
+namespace EST.MIT.InvoiceImporter.Function.Interfaces;
 public interface IImporterFunctions
 {
     Task QueueTrigger([QueueTrigger("invoice-importer", Connection = "QueueConnectionString")] string importMessage, IBinder blobBinder, ILogger log);

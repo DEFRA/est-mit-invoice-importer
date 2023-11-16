@@ -20,7 +20,7 @@ public class ImportRequestTests
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
             Status = UploadStatus.Uploaded,
-            BlobPath = "https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx"
+            BlobFileName = "https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx"
         };
 
         Assert.Equal(Guid.Parse("f3939c6a-3527-4c0a-a649-f662f116d296"), importRequest.ImportRequestId);
@@ -34,6 +34,6 @@ public class ImportRequestTests
         Assert.Equal("First Payment", importRequest.AccountType);
         Assert.Equal("test@example.com", importRequest.CreatedBy);
         Assert.Equal(UploadStatus.Uploaded, importRequest.Status);
-        Assert.Equal("https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx", importRequest.BlobPath);
+        Assert.Equal("https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx", importRequest.BlobFileName);
     }
 }

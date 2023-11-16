@@ -20,7 +20,7 @@ public class AzureBlobServiceTests
         blobBinder.Setup(b => b.BindAsync<Stream>(It.IsAny<BlobAttribute>(), CancellationToken.None)).ReturnsAsync(blobStream);
         var logger = new Mock<ILogger<AzureBlobService>>();
         var blobServiceClientMock = new Mock<BlobServiceClient>();
-        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object, AzureBlobService.default_BlobContainerName);
 
         var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
@@ -35,7 +35,7 @@ public class AzureBlobServiceTests
         var blobBinder = new Mock<IBinder>();
         var logger = new Mock<ILogger<AzureBlobService>>();
         var blobServiceClientMock = new Mock<BlobServiceClient>();
-        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object, AzureBlobService.default_BlobContainerName);
         var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
         Assert.Null(result);
@@ -48,7 +48,7 @@ public class AzureBlobServiceTests
         var blobBinder = new Mock<IBinder>();
         var logger = new Mock<ILogger<AzureBlobService>>();
         var blobServiceClientMock = new Mock<BlobServiceClient>();
-        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object, AzureBlobService.default_BlobContainerName);
 
         var result = await blobService.ReadBLOBIntoStream(importRequestJson, blobBinder.Object);
 
@@ -61,7 +61,7 @@ public class AzureBlobServiceTests
         var logger = new Mock<ILogger<AzureBlobService>>();
         var expectedFileName = "test-file.xlsx";
         var blobServiceClientMock = new Mock<BlobServiceClient>();
-        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object);
+        var blobService = new AzureBlobService(blobServiceClientMock.Object, logger.Object, AzureBlobService.default_BlobContainerName);
 
         blobService.GetType().GetField("_fileName", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(blobService, expectedFileName);
 

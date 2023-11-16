@@ -20,7 +20,8 @@ public class ImportRequestMapperTests
     {
         var entity = new ImportRequestEntity
         {
-            PartitionKey = "f3939c6a-3527-4c0a-a649-f662f116d296",
+            PartitionKey = ImportRequestEntity.DefaultPartitionKey,
+            RowKey = "f3939c6a-3527-4c0a-a649-f662f116d296",
             FileName = "test.xlsx",
             FileSize = 1024,
             FileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -30,13 +31,15 @@ public class ImportRequestMapperTests
             SchemeType = "CP",
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
-            Status = UploadStatus.Uploaded
+            Status = UploadStatus.Uploaded,
+            BlobFileName = "BlobName",
+            BlobFolder = "BlobFolder"
         };
 
         var model = _mapper.Map<ImportRequest>(entity);
 
         Assert.Equal(entity.FileName, model.FileName);
-        Assert.Equal(Guid.Parse(entity.PartitionKey), model.ImportRequestId);
+        Assert.Equal(Guid.Parse(entity.RowKey), model.ImportRequestId);
         Assert.Equal(entity.FileSize, model.FileSize);
         Assert.Equal(entity.FileType, model.FileType);
         Assert.Equal(entity.Timestamp, model.Timestamp);
@@ -46,6 +49,8 @@ public class ImportRequestMapperTests
         Assert.Equal(entity.AccountType, model.AccountType);
         Assert.Equal(entity.CreatedBy, model.CreatedBy);
         Assert.Equal(entity.Status, model.Status);
+        Assert.Equal(entity.BlobFileName, model.BlobFileName);
+        Assert.Equal(entity.BlobFolder, model.BlobFolder);
     }
 
     [Fact]
@@ -64,14 +69,15 @@ public class ImportRequestMapperTests
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
             Status = UploadStatus.Uploaded,
-            BlobPath = "https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx"
+            BlobFileName = "BlobName",
+            BlobFolder = "BlobFolder"
         };
 
         var entity = _mapper.Map<ImportRequestEntity>(model);
 
         Assert.Equal(model.FileName, entity.FileName);
-        Assert.Equal(model.ImportRequestId.ToString(), entity.PartitionKey);
-        Assert.Equal($"{model.ImportRequestId}_{model.Timestamp:O}", entity.RowKey);
+        Assert.Equal(ImportRequestEntity.DefaultPartitionKey, entity.PartitionKey);
+        Assert.Equal(model.ImportRequestId.ToString(), entity.RowKey);
         Assert.Equal(model.FileSize, entity.FileSize);
         Assert.Equal(model.FileType, entity.FileType);
         Assert.Equal(model.Timestamp, entity.Timestamp);
@@ -81,5 +87,7 @@ public class ImportRequestMapperTests
         Assert.Equal(model.AccountType, entity.AccountType);
         Assert.Equal(model.CreatedBy, entity.CreatedBy);
         Assert.Equal(model.Status, entity.Status);
+        Assert.Equal(model.BlobFileName, entity.BlobFileName);
+        Assert.Equal(model.BlobFolder, entity.BlobFolder);
     }
 }

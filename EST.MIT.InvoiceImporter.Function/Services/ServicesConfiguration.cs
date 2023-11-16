@@ -28,31 +28,34 @@ namespace EST.MIT.InvoiceImporter.Function.Services
             services.AddSingleton<IAzureTableService>(_ =>
             {
                 var tableStorageAccountCredential = configuration.GetSection("TableConnectionString:Credential").Value;
+                var ImporterTableName = configuration.GetSection("ImporterTableName").Value;
                 if (IsManagedIdentity(tableStorageAccountCredential))
                 {
                     var tableServiceUri = new Uri(configuration.GetSection("TableConnectionString:TableServiceUri").Value);
                     Console.WriteLine($"Startup.TableClient using Managed Identity with url {tableServiceUri}");
-                    return new AzureTableService(new TableClient(tableServiceUri, "importrequests", new DefaultAzureCredential()), mapperConfig.CreateMapper());
+                    return new AzureTableService(new TableClient(tableServiceUri, ImporterTableName, new DefaultAzureCredential()), mapperConfig.CreateMapper());
                 }
                 else
                 {
-                    return new AzureTableService(new TableClient(configuration.GetSection("TableConnectionString").Value, "importrequests"), mapperConfig.CreateMapper());
+                    return new AzureTableService(new TableClient(configuration.GetSection("TableConnectionString").Value, ImporterTableName), mapperConfig.CreateMapper());
                 }
             });
 
             services.AddSingleton<IAzureBlobService>(_ =>
             {
                 var blobStorageAccountCredential = configuration.GetSection("BlobConnectionString:Credential").Value;
+                var blobContainerName = configuration.GetSection("BlobContainerName").Value;
+                blobContainerName = string.IsNullOrWhiteSpace(blobContainerName) ? AzureBlobService.default_BlobContainerName : blobContainerName;
                 var logger = _.GetService<ILogger<AzureBlobService>>();
                 if (IsManagedIdentity(blobStorageAccountCredential))
                 {
                     var blobServiceUri = new Uri(configuration.GetSection("BlobConnectionString:BlobServiceUri").Value);
                     Console.WriteLine($"Startup.BlobClient using Managed Identity with url {blobServiceUri}");
-                    return new AzureBlobService(new BlobServiceClient(blobServiceUri, new DefaultAzureCredential()), logger);
+                    return new AzureBlobService(new BlobServiceClient(blobServiceUri, new DefaultAzureCredential()), logger, blobContainerName);
                 }
                 else
                 {
-                    return new AzureBlobService(new BlobServiceClient(configuration.GetSection("BlobConnectionString").Value), logger);
+                    return new AzureBlobService(new BlobServiceClient(configuration.GetSection("BlobConnectionString").Value), logger, blobContainerName);
                 }
             });
 
