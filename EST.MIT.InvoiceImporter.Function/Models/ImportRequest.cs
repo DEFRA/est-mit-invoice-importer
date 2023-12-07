@@ -14,6 +14,7 @@ public class ImportRequest
     public string Organisation { get; set; }
     public string SchemeType { get; set; }
     public string AccountType { get; set; }
+    public string Email { get; set; }
     public string CreatedBy { get; init; }
     public UploadStatus Status { get; set; }
     public string BlobFileName { get; set; }

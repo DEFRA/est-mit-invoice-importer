@@ -1,7 +1,7 @@
 using Azure.Storage.Blobs;
 using EST.MIT.InvoiceImporter.Function.Functions;
 using EST.MIT.InvoiceImporter.Function.Interfaces;
-using EST.MIT.InvoiceImporter.Function.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -16,6 +16,8 @@ public class ImporterTests
     private readonly ImporterFunctions _importer;
     private readonly Mock<IAzureBlobService> _mockBlobService;
     private readonly Mock<IAzureTableService> _mockTableService;
+    private readonly Mock<INotificationQueueService> _mockNotificationQueueService;
+    private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
 
     public ImporterTests()
     {
@@ -23,6 +25,8 @@ public class ImporterTests
         _mockBinder = new Mock<IBinder>();
         _mockBlobService = new Mock<IAzureBlobService>();
         _mockTableService = new Mock<IAzureTableService>();
+        _mockNotificationQueueService = new Mock<INotificationQueueService>();
+        _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
 
         var mockConfig = new Mock<IConfiguration>();
         var mockConfigSection = new Mock<IConfigurationSection>();
@@ -38,7 +42,7 @@ public class ImporterTests
 
         var mockBlobService = new Mock<IAzureBlobService>();
 
-        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object);
+        _importer = new ImporterFunctions(mockAzureBlobService.Object, _mockTableService.Object, _mockNotificationQueueService.Object, _mockHttpContextAccessor.Object);
 
     }
 

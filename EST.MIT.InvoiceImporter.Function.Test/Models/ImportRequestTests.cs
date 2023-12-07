@@ -18,6 +18,7 @@ public class ImportRequestTests
             Organisation = "RDT",
             SchemeType = "CP",
             AccountType = "First Payment",
+            Email = "email@defra.gov.uk",
             CreatedBy = "test@example.com",
             Status = UploadStatus.Uploaded,
             BlobFileName = "https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx"
@@ -32,6 +33,7 @@ public class ImportRequestTests
         Assert.Equal("RDT", importRequest.Organisation);
         Assert.Equal("CP", importRequest.SchemeType);
         Assert.Equal("First Payment", importRequest.AccountType);
+        Assert.Equal("email@defra.gov.uk", importRequest.Email);
         Assert.Equal("test@example.com", importRequest.CreatedBy);
         Assert.Equal(UploadStatus.Uploaded, importRequest.Status);
         Assert.Equal("https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx", importRequest.BlobFileName);
