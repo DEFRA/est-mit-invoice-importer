@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Azure;
 using Azure.Data.Tables;
 using EST.MIT.InvoiceImporter.Function.Models;
@@ -23,6 +24,7 @@ public class ImportRequestEntity : ITableEntity
     public UploadStatus Status { get; init; }
     public string BlobFileName { get; set; }
     public string BlobFolder { get; set; }
+    public string Email { get; set; }
 
     public ETag ETag { get; set; }
 
@@ -44,6 +46,7 @@ public class ImportRequestEntity : ITableEntity
         Status = importRequest.Status;
         BlobFileName = importRequest.BlobFileName;
         BlobFolder = importRequest.BlobFolder;
+        Email = importRequest.Email;
 
         PartitionKey = DefaultPartitionKey;
         RowKey = importRequest.ImportRequestId.ToString();
