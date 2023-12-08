@@ -1,12 +1,6 @@
 ﻿using System;
 
 namespace EST.MIT.InvoiceImporter.Function.Models;
-public enum NotificationType
-{
-    approval,
-    approved,
-    rejected
-}
 
 public class Notification
 {
