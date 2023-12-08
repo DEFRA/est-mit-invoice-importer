@@ -26,19 +26,6 @@ public class Notification
     }
 }
 
-public class NotificationInvoiceApprove
-{
-    public string ApproverEmail { get; set; } = default!;
-    public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
-}
-
-public class NotificationInvoiceReject
-{
-    public string Approver { get; set; } = default!;
-    public string Justification { get; set; } = default!;
-    public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
-}
-
 public class NotificationOutstandingApproval
 {
     public string Name { get; set; } = default!;

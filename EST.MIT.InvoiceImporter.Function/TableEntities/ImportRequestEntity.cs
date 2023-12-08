@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using Azure;
 using Azure.Data.Tables;
 using EST.MIT.InvoiceImporter.Function.Models;
