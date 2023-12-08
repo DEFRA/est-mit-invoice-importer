@@ -6,11 +6,11 @@ namespace EST.MIT.InvoiceImporter.Function.Test.Models;
 public class UploadStatusTests
 {
     [Theory]
-    [InlineData(UploadStatus.Required, "REQUIRED")]
-    [InlineData(UploadStatus.Uploaded, "UPLOADED")]
-    [InlineData(UploadStatus.Uploading, "UPLOADING")]
-    [InlineData(UploadStatus.Validating, "VALIDATING")]
-    [InlineData(UploadStatus.Rejected, "REJECTED")]
+    
+    [InlineData(UploadStatus.Upload_successful, "Upload successful")]
+    [InlineData(UploadStatus.Upload_failed, "Upload failed")]
+    [InlineData(UploadStatus.Upload_validated, "Upload validated")]
+    [InlineData(UploadStatus.Uploaded, "Uploaded")]
     public void DisplayAttributeIsCorrect(UploadStatus status, string expectedName)
     {
         var memberInfo = status.GetType().GetMember(status.ToString());

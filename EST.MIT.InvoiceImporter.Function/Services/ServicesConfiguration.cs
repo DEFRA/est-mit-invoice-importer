@@ -76,6 +76,27 @@ namespace EST.MIT.InvoiceImporter.Function.Services
                     return new EventQueueService(new QueueClient(configuration.GetSection("QueueConnectionString").Value, eventQueueName));
                 }
             });
+
+            services.AddSingleton<INotificationQueueService>(_ =>
+            {
+                var notificationQueueName = configuration.GetSection("NotificationQueueName").Value;
+                var queueStorageAccountCredential = configuration.GetSection("QueueConnectionString:Credential").Value;
+                var logger = _.GetService<ILogger<INotificationQueueService>>();
+                if (logger is null)
+                {
+                    return null;
+                }
+                if (IsManagedIdentity(queueStorageAccountCredential))
+                {
+                    var queueServiceUri = configuration.GetSection("QueueConnectionString:QueueServiceUri").Value;
+                    var queueUrl = new Uri($"{queueServiceUri}{notificationQueueName}");
+                    return new NotificationQueueService(new QueueClient(queueUrl, new DefaultAzureCredential()), logger);
+                }
+                else
+                {
+                    return new NotificationQueueService(new QueueClient(configuration.GetSection("QueueConnectionString").Value, notificationQueueName), logger);
+                }
+            });
         }
 
         private static bool IsManagedIdentity(string credentialName)

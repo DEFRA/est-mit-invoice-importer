@@ -38,6 +38,7 @@ public class AzureTableServiceTests
             PaymentType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
+            Email = "test@defra.gov.uk",
             AccountType = "First Payment"
         };
 
@@ -63,6 +64,7 @@ public class AzureTableServiceTests
             PaymentType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
+            Email = "test@defra.gov.uk",
             AccountType = "First Payment"
         };
 
@@ -92,6 +94,7 @@ public class AzureTableServiceTests
             PaymentType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
+            Email = "test@defra.gov.uk",
             AccountType = "First Payment"
         };
 
@@ -120,7 +123,7 @@ public class AzureTableServiceTests
                 FileName = "test.xlsx",
                 PaymentType = "AR",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:00.0000000+00:00"),
-                CreatedBy = "test@example.com"
+                CreatedBy = "test@example.com",
             },
             new ImportRequestEntity
             {
@@ -129,7 +132,7 @@ public class AzureTableServiceTests
                 FileName = "test2.xlsx",
                 PaymentType = "AP",
                 Timestamp = DateTimeOffset.Parse("2023-03-15T17:00:01.0000000+00:00"),
-                CreatedBy = "test@example.com"
+                CreatedBy = "test@example.com",
             }
         }, null, Mock.Of<Response>());
 
@@ -161,7 +164,8 @@ public class AzureTableServiceTests
             PaymentType = "AR",
             Organisation = "RDT",
             SchemeType = "CP",
-            AccountType = "First Payment"
+            AccountType = "First Payment",
+            Email = "test@defra.gov.uk",
         };
 
         var mockResponse = new Mock<Response<ImportRequestEntity>>();

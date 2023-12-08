@@ -34,6 +34,5 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddSingleton<IImporterFunctions, ImporterFunctions>();
         builder.Services.AddSingleton<IUploadFunctions, UploadFunctions>();
-        builder.Services.AddSingleton<INotificationService>(_ => new NotificationService(Configuration));
     }
 }
