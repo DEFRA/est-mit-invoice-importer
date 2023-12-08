@@ -31,6 +31,7 @@ public class ImporterTests
         var mockWebUIBaseUrlSection = new Mock<IConfigurationSection>();
         mockWebUIBaseUrlSection.SetupGet(m => m.Value).Returns(fakeBaseUrl);
         _mockConfiguration.Setup(m => m.GetSection("WebUIBaseUrl")).Returns(mockWebUIBaseUrlSection.Object);
+        _mockConfiguration.Setup(m => m.GetSection("WebUIUserUploadsUrl")).Returns(mockWebUIBaseUrlSection.Object);
 
         var mockBlobServiceClient = new Mock<BlobServiceClient>();
         _mockBlobService.Setup(x => x.GetBlobServiceClient()).Returns(mockBlobServiceClient.Object);
@@ -50,7 +51,7 @@ public class ImporterTests
         _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>())).ReturnsAsync(true);
         _mockNotificationQueueService.Setup(x => x.AddMessageToQueueAsync(It.IsAny<Notification>())).ReturnsAsync(true);
 
-        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Upload_success\"}", _mockBinder.Object, _mockLogger.Object);
+        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Uploaded\"}", _mockBinder.Object, _mockLogger.Object);
 
         _mockBinder.Verify(b => b.BindAsync<string>(It.IsAny<BlobAttribute>(), CancellationToken.None), Times.Never);
     }
@@ -58,7 +59,7 @@ public class ImporterTests
     [Fact]
     public async Task QueueTrigger_InvalidJson_LogsError()
     {
-        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Upload_success\"}", _mockBinder.Object, _mockLogger.Object);
+        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Uploaded\"}", _mockBinder.Object, _mockLogger.Object);
 
         _mockLogger.Verify(
             x => x.Log(
@@ -80,7 +81,7 @@ public class ImporterTests
         _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>()))
             .ReturnsAsync(true);
 
-        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Upload_success\"}", _mockBinder.Object, _mockLogger.Object);
+        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Uploaded\"}", _mockBinder.Object, _mockLogger.Object);
 
         _mockLogger.Verify(
             x => x.Log(
@@ -102,7 +103,7 @@ public class ImporterTests
         _mockBlobService.Setup(x => x.MoveFileToArchive(It.IsAny<string>(), It.IsAny<BlobServiceClient>()))
             .ReturnsAsync(false);
 
-        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Upload_success\"}", _mockBinder.Object, _mockLogger.Object);
+        await _importer.QueueTrigger("{\"importRequestId\":\"578ecf14-8ccf-4639-ace0-8f5905f8049f\",\"fileName\":\"TestFile.txt\",\"SchemeType\":\"AZ\",\"Email\":\"email@defra.gov.uk\",\"Status\":\"Uploaded\"}", _mockBinder.Object, _mockLogger.Object);
 
         _mockLogger.Verify(
             x => x.Log(

@@ -49,7 +49,7 @@ public class ImporterFunctions : IImporterFunctions
                 if (isMoved)
                 {
                     importRequest.BlobFolder = AzureBlobService.folder_archive;
-                    importRequest.Status = UploadStatus.Upload_success;
+                    importRequest.Status = UploadStatus.Uploaded;
                     var newImportMessage = JsonConvert.SerializeObject(importRequest);
                     await _azureTableService.UpsertImportRequestAsync(importRequest);
                     log.LogInformation($"[MainTrigger] Successfully moved and processed file: {importRequest.FileName}");
@@ -74,6 +74,7 @@ public class ImporterFunctions : IImporterFunctions
     private Notification CreateNotificationRequest(ImportRequest importMessage)
     {
         var baseUrl = _configuration.GetValue<string>("WebUIBaseUrl");
+        var userUploadsUrlExtension = _configuration.GetValue<string>("WebUIUserUploadsUrl");
 
         return new NotificationBuilder()
                                         .WithId(importMessage.ImportRequestId.ToString())
@@ -83,7 +84,7 @@ public class ImporterFunctions : IImporterFunctions
                                         .WithData(new NotificationOutstandingApproval
                                         {
                                             Name = importMessage.Email,
-                                            Link = $"{baseUrl}/user-uploads",
+                                            Link = $"{baseUrl}/{userUploadsUrlExtension}",
                                             ImportRequestId = importMessage.ImportRequestId.ToString(),
                                             SchemeType = importMessage.SchemeType
                                         })
