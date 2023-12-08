@@ -4,18 +4,9 @@ namespace EST.MIT.InvoiceImporter.Function.Models;
 
 public enum UploadStatus
 {
-    [Display(Name = "REQUIRED")]
-    Required,
+    [Display(Name = "Upload success")]
+    Upload_success,
 
-    [Display(Name = "UPLOADED")]
-    Uploaded,
-
-    [Display(Name = "UPLOADING")]
-    Uploading,
-
-    [Display(Name = "VALIDATING")]
-    Validating,
-
-    [Display(Name = "REJECTED")]
-    Rejected,
+    [Display(Name = "Upload failed")]
+    Upload_failed,
 }

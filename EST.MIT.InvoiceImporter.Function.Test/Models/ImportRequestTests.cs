@@ -20,7 +20,7 @@ public class ImportRequestTests
             AccountType = "First Payment",
             Email = "email@defra.gov.uk",
             CreatedBy = "test@example.com",
-            Status = UploadStatus.Uploaded,
+            Status = UploadStatus.Upload_success,
             BlobFileName = "https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx"
         };
 
@@ -35,7 +35,7 @@ public class ImportRequestTests
         Assert.Equal("First Payment", importRequest.AccountType);
         Assert.Equal("email@defra.gov.uk", importRequest.Email);
         Assert.Equal("test@example.com", importRequest.CreatedBy);
-        Assert.Equal(UploadStatus.Uploaded, importRequest.Status);
+        Assert.Equal(UploadStatus.Upload_success, importRequest.Status);
         Assert.Equal("https://defrastorageaccount.blob.core.windows.net/invoices/import/test.xlsx", importRequest.BlobFileName);
     }
 }

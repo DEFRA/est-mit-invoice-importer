@@ -31,7 +31,7 @@ public class ImportRequestMapperTests
             SchemeType = "CP",
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
-            Status = UploadStatus.Uploaded,
+            Status = UploadStatus.Upload_success,
             BlobFileName = "BlobName",
             BlobFolder = "BlobFolder"
         };
@@ -68,7 +68,7 @@ public class ImportRequestMapperTests
             SchemeType = "CP",
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
-            Status = UploadStatus.Uploaded,
+            Status = UploadStatus.Upload_success,
             BlobFileName = "BlobName",
             BlobFolder = "BlobFolder"
         };

@@ -20,7 +20,7 @@ public class ImportRequestEntityTests
             SchemeType = "CP",
             AccountType = "First Payment",
             CreatedBy = "test@example.com",
-            Status = UploadStatus.Uploaded,
+            Status = UploadStatus.Upload_success,
             BlobFileName="BlobFileName",
             BlobFolder="BlobFolder"
         };
@@ -36,7 +36,7 @@ public class ImportRequestEntityTests
         Assert.Equal("CP", importRequestEntity.SchemeType);
         Assert.Equal("First Payment", importRequestEntity.AccountType);
         Assert.Equal("test@example.com", importRequestEntity.CreatedBy);
-        Assert.Equal(UploadStatus.Uploaded, importRequestEntity.Status);
+        Assert.Equal(UploadStatus.Upload_success, importRequestEntity.Status);
         Assert.Equal("BlobFileName", importRequestEntity.BlobFileName);
         Assert.Equal("BlobFolder", importRequestEntity.BlobFolder);
 
