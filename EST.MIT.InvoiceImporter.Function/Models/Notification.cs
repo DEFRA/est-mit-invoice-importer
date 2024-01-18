@@ -26,5 +26,6 @@ public class NotificationOutstandingApproval
     public string Link { get; set; } = default!;
     public string ImportRequestId { get; set; } = default!;
     public string SchemeType { get; set; } = default!;
+    public string confirmationNumber { get; set; } = default!;
     public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 }

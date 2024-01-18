@@ -86,7 +86,8 @@ public class ImporterFunctions : IImporterFunctions
                                             Name = importMessage.Email,
                                             Link = $"{baseUrl}/{userUploadsUrlExtension}",
                                             ImportRequestId = importMessage.ImportRequestId.ToString(),
-                                            SchemeType = importMessage.SchemeType
+                                            SchemeType = importMessage.SchemeType,
+                                            confirmationNumber = importMessage.ImportRequestId.ToString(),
                                         })
                                     .Build();
     }
