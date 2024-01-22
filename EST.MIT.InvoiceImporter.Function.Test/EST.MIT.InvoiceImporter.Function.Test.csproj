@@ -36,11 +36,4 @@
     <ProjectReference Include="..\EST.MIT.InvoiceImporter.Function\EST.MIT.InvoiceImporter.Function.csproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <None Include="TestData\MIT Invoice Import Spreadsheet.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
