@@ -1,0 +1,51 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: rpa-mit-invoice-importer
+  description: The MIT invoice importer
+  annotations:
+    github.com/project-slug: defra/est-mit-invoice-importer
+    dev.azure.com/project: DEFRA-MIT
+    dev.azure.com/build-definition: RPA-MIT-INVOICE-IMPORTER
+    sonarqube.org/project-key: RPA-MIT-INVOICE-IMPORTER
+    grafana/dashboard-selector: "folderTitle == 'Managed Prometheus'"
+    backstage.io/kubernetes-id: RPA-MIT-INVOICE-IMPORTER
+  links:
+    - url: https://github.com/est-mit-invoice-importer
+      title: View repository
+      icon: github
+    - url: https://sonarcloud.io/summary/overall?id=RPA-MIT-INVOICE-IMPORTER
+      title: SonarCloud Analysis
+    - url: https://snyk.io/test/github/DEFRA/RPA-MIT-INVOICE-IMPORTER
+      title: Snyk Analysis
+  tags:
+    - dotnet
+    - back-end
+    - storage-account
+    - application-insights
+spec:
+  type: backend
+  lifecycle: alpha
+  owner: "group:default/lap-mit"
+  system: "system:default/lap-mit-system"
+  dependsOn:
+    - "resource:default/rpa-mit-import-storage-table"
+    - "resource:default/rpa-mit-invoices-blob-container"
+    - "resource:default/rpa-mit-event-storage-queue"
+    - "resource:default/rpa-mit-notification-storage-queue"
+    - "resource:default/ADPINFAI01"
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: rpa-mit-import-storage-table
+  description: Invoices storage table
+  tags:
+    - storage-account
+    - table
+spec:
+  type: table-storage
+  owner: "group:default/lap-mit"
+  system: "system:default/lap-mit-system"
+  dependsOn: 
+    - "resource:default/adpinfst01"
