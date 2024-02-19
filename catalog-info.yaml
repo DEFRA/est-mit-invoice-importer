@@ -4,14 +4,14 @@ metadata:
   name: rpa-mit-invoice-importer
   description: The MIT invoice importer
   annotations:
-    github.com/project-slug: defra/RPA-MIT-INVOICE-IMPORTER
+    github.com/project-slug: defra/est-mit-invoice-importer
     dev.azure.com/project: DEFRA-MIT
     dev.azure.com/build-definition: RPA-MIT-INVOICE-IMPORTER
     sonarqube.org/project-key: RPA-MIT-INVOICE-IMPORTER
     grafana/dashboard-selector: "folderTitle == 'Managed Prometheus'"
     backstage.io/kubernetes-id: RPA-MIT-INVOICE-IMPORTER
   links:
-    - url: https://github.com/DEFRA/RPA-MIT-INVOICE-IMPORTER
+    - url: https://github.com/est-mit-invoice-importer
       title: View repository
       icon: github
     - url: https://sonarcloud.io/summary/overall?id=RPA-MIT-INVOICE-IMPORTER
