@@ -88,6 +88,7 @@ public class ImporterFunctions : IImporterFunctions
                                             ImportRequestId = importMessage.ImportRequestId.ToString(),
                                             SchemeType = importMessage.SchemeType,
                                             confirmationNumber = importMessage.ImportRequestId.ToString(),
+                                            FileName = importMessage.FileName
                                         })
                                     .Build();
     }
